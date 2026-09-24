@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kontakt — ATELIER</title>
+<meta name="description" content="Kontakt und persönliche Beratung.">
+<meta name="theme-color" content="#f7f6f3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23151515'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='18' fill='%23fff' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="kontakt" data-title="Kontakt">
+<main id="main">
+<header class="page-head wrap"><p class="eyebrow" style="margin-bottom:14px">Kundenservice</p><h1>Kontakt</h1><p class="lead" style="margin-top:18px;max-width:640px">Fragen zu Größen, Material oder Ihrer Bestellung? Wir antworten persönlich, in der Regel innerhalb eines Werktages.</p></header>
+<div class="wrap split" style="margin-top:48px">
+  <form id="contact-form" novalidate>
+    <div class="cols-2">
+      <div class="field"><label for="name">Name</label><input id="name" required autocomplete="name"><span class="error">Bitte geben Sie Ihren Namen ein.</span></div>
+      <div class="field"><label for="c-email">E-Mail-Adresse</label><input id="c-email" type="email" required autocomplete="email"><span class="error">Bitte geben Sie eine gültige E-Mail-Adresse ein.</span></div>
+    </div>
+    <div class="field"><label for="betreff">Worum geht es?</label>
+      <select id="betreff" required>
+        <option value="">Bitte wählen</option>
+        <option value="beratung">Größen- und Stilberatung</option>
+        <option value="bestellung">Meine Bestellung</option>
+        <option value="rueckgabe">Rückgabe oder Umtausch</option>
+        <option value="sonstiges">Sonstiges</option>
+      </select><span class="error">Bitte wählen Sie ein Thema.</span></div>
+    <div class="field" data-field="bestellnr"><label for="bestellnr">Bestellnummer <span style="color:var(--muted)">(optional)</span></label><input id="bestellnr"></div>
+    <div class="field"><label for="nachricht">Nachricht</label><textarea id="nachricht" rows="6" required></textarea><span class="error">Bitte schreiben Sie uns eine Nachricht.</span></div>
+    <button class="btn" type="submit">Nachricht senden</button>
+  </form>
+  <div>
+    <h3>Kundenservice</h3>
+    <p style="margin-top:12px;color:var(--ink-2)">Montag bis Freitag, 9–18 Uhr</p>
+    <p style="color:var(--ink-2)">E-Mail: <span class="ph">[E-Mail-Adresse]</span><br>Telefon: <span class="ph">[Telefonnummer]</span></p>
+    <h3 style="margin-top:40px">Schneller zur Antwort</h3>
+    <ul style="color:var(--ink-2);padding-left:18px;margin-top:12px">
+      <li><a class="link" href="service.html#versand">Versand und Lieferzeiten</a></li>
+      <li><a class="link" href="service.html#rueckgabe">Rückgabe und Umtausch</a></li>
+      <li><a class="link" href="service.html#groessen">Größentabelle</a></li>
+    </ul>
+  </div>
+</div>
+</main>
+<script src="assets/data.js"></script>
+<script src="assets/garments.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

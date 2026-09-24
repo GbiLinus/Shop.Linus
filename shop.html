@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kollektion — ATELIER</title>
+<meta name="description" content="Die ganze Kollektion: Mäntel, Strick, Hemden, Hosen und Accessoires.">
+<meta name="theme-color" content="#f7f6f3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23151515'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='18' fill='%23fff' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-page="shop" data-title="Kollektion">
+<main id="main">
+<header class="page-head wrap">
+  <nav class="crumbs" id="shop-crumbs" aria-label="Brotkrumen"></nav>
+  <h1 id="shop-title">Kollektion</h1>
+  <p class="mono" id="shop-count"></p>
+</header>
+<div class="toolbar">
+  <div class="wrap">
+    <div class="chips" id="chips" role="group" aria-label="Kategorien"></div>
+    <div class="right">
+      <button class="filter-btn" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel">Filter</button>
+      <label class="sr-only" for="sort">Sortieren</label>
+      <select class="select" id="sort">
+        <option value="empfohlen">Empfohlen</option>
+        <option value="neu">Neueste zuerst</option>
+        <option value="preis-auf">Preis aufsteigend</option>
+        <option value="preis-ab">Preis absteigend</option>
+      </select>
+    </div>
+  </div>
+</div>
+<div class="filter-panel" id="filter-panel">
+  <div class="wrap">
+    <div><h4 class="caps">Farbe</h4><div class="opt-list" id="filter-colors"></div></div>
+    <div><h4 class="caps">Größe</h4><div class="opt-list" id="filter-sizes"></div></div>
+    <div><h4 class="caps">Preis</h4><div class="opt-list" id="filter-prices"></div></div>
+    <button class="link caps reset" id="filter-reset">Filter zurücksetzen</button>
+  </div>
+</div>
+<section class="wrap" style="padding-bottom:100px">
+  <div class="grid" id="shop-grid"></div>
+</section>
+</main>
+<script src="assets/data.js"></script>
+<script src="assets/garments.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

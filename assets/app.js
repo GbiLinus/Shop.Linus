@@ -684,7 +684,6 @@
       levels[k].classList.add("locked");
       if (stores[k]) stores[k].classList.add("active");
       doorTl.timeScale(1).play();
-      storeDoors(k - 0, true);
     };
     const close = () => {
       if (!doorsOpen) return;
@@ -692,7 +691,6 @@
       levels[floor].classList.remove("locked");
       if (stores[floor]) stores[floor].classList.remove("active");
       doorTl.timeScale(2).reverse();
-      storeDoors(floor, false);
     };
 
     const nearest = (y) => Math.max(0, Math.min(N, Math.round(y / pitch)));
@@ -765,7 +763,9 @@
       const b = brandOf(a.dataset.brand);
       const veil = $("#veil");
       veil.style.background = b.interior;
-      gsap.to(veil, { opacity: 1, duration: 0.55, ease: "power1.in", onComplete: () => (location.href = a.href) });
+      // Die Ladentür geht erst beim Klick auf, dann Überblendung in den Laden
+      storeDoors(stores.indexOf(a), true);
+      gsap.to(veil, { opacity: 1, duration: 0.5, delay: 0.55, ease: "power1.in", onComplete: () => (location.href = a.href) });
     };
 
     floorsEl.addEventListener("click", (e) => {
@@ -809,6 +809,7 @@
       if (!e.persisted) return;
       busy = false;
       gsap.set("#veil", { opacity: 0 });
+      gsap.set($$(".store .leaf", floorsEl), { xPercent: 0 });
       if (lenis) lenis.start();
     });
   }

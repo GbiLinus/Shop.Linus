@@ -448,3 +448,13 @@ table.sizes-table { width: 100%; border-collapse: collapse; font-size: 13px; mar
   .reveal { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
 }
+
+/* ================================================================
+   Seitenübergänge (View Transitions API, im Browser eingebaut).
+   Weiche Überblendung zwischen allen Seiten des Shops.
+   Browser ohne Unterstützung wechseln einfach normal.
+   ================================================================ */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: cubic-bezier(.2, .7, .1, 1); }
+.header { view-transition-name: site-header; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }

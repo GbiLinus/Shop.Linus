@@ -1,6 +1,6 @@
 # Shop.Linus — Das Haus der Marken
 
-Online-Shop für Kleidung verschiedener Marken. Die Startseite ist ein **gläserner Aufzug**: Scrollen fährt ihn hoch und runter, jede Etage ist ein Laden. Beim Einrasten öffnen sich die Aufzugstüren, der Markenname steht groß daneben und in der Anzeige. Zwischen den Etagen fährt man kurz durch eine schwarze Schicht, den Boden im Querschnitt. Rechts neben der Tür bringt ein Tastenfeld direkt zu jeder Marke.
+Online-Shop für Kleidung verschiedener Marken. Die Startseite ist ein **Aufzug** (Edelstahlkabine nach Foto, gläserne Innentüren): Scrollen fährt ihn hoch und runter, jede Etage ist ein Laden. Beim Einrasten öffnen sich die Aufzugstüren, der Markenname steht groß daneben und in der Anzeige. Zwischen den Etagen fährt man kurz durch eine schwarze Schicht, den Boden im Querschnitt. Rechts neben der Tür bringt ein Tastenfeld direkt zu jeder Marke.
 
 Status: **Aufzug, Läden, Shop, Warenkorb und Kasse funktionieren (Testbetrieb).** Marken, Ladenbilder und Produkte sind Platzhalter. Die Näh-Animation kommt ganz am Ende.
 
@@ -13,7 +13,7 @@ Lokal ansehen: im Ordner `python3 -m http.server` starten und `http://localhost:
 | Fahren | Scrollen oder Wischen nach oben/unten. Der Aufzug rastet auf jeder Etage ein |
 | Einrasten | Die Aufzugstüren öffnen sich, links erscheint „Etage + Marke“, oben die Anzeige. Die Ladentür bleibt zu |
 | Weiterfahren | Türen schließen sich, man fährt durch die schwarze Schicht zur nächsten Etage |
-| Tastenfeld | Rechts neben der Tür: E = Eingang, 1–10 = Marken. Die aktuelle Etage leuchtet |
+| Tastenfeld | An der rechten Wand wie im echten Aufzug: 10 oben, E (Eingang) unten. Die aktuelle Etage leuchtet |
 | Eintreten | Klick auf den Laden: Erst jetzt geht die Ladentür auf, dann blendet das Bild in die Ladenfarbe über (Kamera bleibt stehen) |
 | Im Laden | Etagen Damen (EG), Herren (1. OG), Unisex (2. OG) mit Regalen je Kategorie |
 | Zurück | „Zurück zum Aufzug“ oder die Zurück-Taste: Der Aufzug steht wieder auf dieser Etage |
@@ -28,7 +28,7 @@ Lokal ansehen: im Ordner `python3 -m http.server` starten und `http://localhost:
 ## Leistung (Ziel: mindestens 60 fps)
 
 - Beim Fahren wird nur eine Ebene per `transform` verschoben (Grafikkarte), keine Filter, Unschärfe oder Spiegelungen.
-- Die Kabine (Glas, Türen, Tastenfeld) steht fest und wird nur einmal gezeichnet. Die Türen bewegen sich per `transform`.
+- Die Kabine ist ein Foto (`assets/tex/cabin.jpg`), das als Rahmen um die Türöffnung liegt (`border-image`). Sie steht fest und wird nur einmal gezeichnet. Auf dem PC bleiben die Wände schmal und die Decke wiederholt sich, statt verzerrt zu werden. Die Glastüren bewegen sich per `transform`.
 - Texturen (Stein, Beton, Marmor) sind vorab berechnete Bilder in `assets/tex/`, keine Rechenfilter.
 - Die Kleidungs-Platzhalter werden als Bilder eingebunden und einmal gerastert, nicht bei jedem Bild neu gezeichnet.
 - Die Artikelliste zeigt 24 Artikel und lädt per „Mehr anzeigen“ nach.

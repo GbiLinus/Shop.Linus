@@ -594,7 +594,7 @@
            <div>
              <p class="mono">Eingang · ${N} Etagen · ${N} Marken</p>
              <h1>${esc(SHOP.brand)}<em>${esc(SHOP.claim)}</em></h1>
-             <p class="wp-text">Steigen Sie ein. Scrollen fährt den gläsernen Aufzug, jede Etage ist ein Laden. Das Tastenfeld rechts bringt Sie direkt ans Ziel.</p>
+             <p class="wp-text">Steigen Sie ein. Scrollen fährt den Aufzug, jede Etage ist ein Laden. Das Tastenfeld rechts bringt Sie direkt ans Ziel.</p>
              <span class="walk-hint caps">Nach unten scrollen</span>
            </div>
            ${directory()}
@@ -612,9 +612,11 @@
         </section>`
       ).join("");
 
+    // Wie im echten Aufzug: oberste Zahl oben, E ganz unten
     $("#cab-panel").innerHTML =
-      `<span class="ph-title">Etage</span><button class="lobby-btn on" data-go="0" aria-label="Eingang">E</button>` +
-      BRANDS.map((b, i) => `<button data-go="${i + 1}" data-name="${esc(b.name)}" aria-label="Etage ${i + 1}: ${esc(b.name)}">${i + 1}</button>`).join("");
+      BRANDS.map((b, i) => `<button data-go="${i + 1}" data-name="${esc(b.name)}" aria-label="Etage ${i + 1}: ${esc(b.name)}">${i + 1}</button>`)
+        .reverse()
+        .join("") + `<button class="lobby-btn on" data-go="0" data-name="Eingang" aria-label="Eingang">E</button>`;
 
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce || !window.gsap || !window.ScrollTrigger) {
@@ -643,6 +645,14 @@
     const measure = () => {
       H = root.clientHeight;
       G = Math.round(H * 0.3);
+      // Kabinenrahmen: auf dem PC schmale Wände (breite Türöffnung), auf dem Handy wie im Foto
+      const W = root.clientWidth;
+      const mobile = W < 761;
+      const side = mobile ? Math.round(W * 0.15) : Math.round(Math.min(200, Math.max(110, W * 0.11)));
+      root.style.setProperty("--bwl", `${side}px`);
+      root.style.setProperty("--bwr", `${side}px`);
+      root.style.setProperty("--bwt", `${Math.round(H * (mobile ? 0.11 : 0.12))}px`);
+      root.style.setProperty("--bwb", `${Math.round(H * (mobile ? 0.12 : 0.13))}px`);
       pitch = H + G;
       total = N * pitch;
       root.style.setProperty("--fh", `${H}px`);

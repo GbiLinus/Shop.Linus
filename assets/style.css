@@ -521,61 +521,71 @@ table.sizes-table { width: 100%; border-collapse: collapse; font-size: 13px; mar
 .directory-board a:hover { color: #fff; }
 .directory-board .mono { color: #8d877c; }
 
-/* ---------- Die Kabine (steht fest, bewegt sich nicht) ---------- */
+/* ---------- Die Kabine (Foto als Rahmen, Türöffnung frei) ----------
+   Das Foto liegt als border-image um die Türöffnung. Seitenwände behalten
+   ihre Form, die Decke wiederholt sich (Spots bleiben rund), wenn die
+   Kabine auf breiten Bildschirmen breiter wird. Steht fest, bewegt sich nie. */
 .cabin { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
-.cab-beam { position: absolute; left: 0; right: 0; top: 0; height: 9%; min-height: 54px; background: linear-gradient(#2c2c2e, #1b1b1c); border-bottom: 2px solid #8d8f93; display: flex; align-items: center; justify-content: center; }
-.cab-display { display: flex; align-items: center; gap: 14px; padding: 7px 16px; background: #0b0b0b; border: 1px solid #444; color: #f0a93a; font: 400 13px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-shadow: 0 0 8px rgba(240, 169, 58, .6); min-width: 250px; justify-content: center; }
+.cab-frame {
+  position: absolute; inset: 0; border-style: solid;
+  border-width: var(--bwt, 100px) var(--bwr, 150px) var(--bwb, 110px) var(--bwl, 150px);
+  border-image: url("tex/cabin.jpg") 162 290 162 282 / var(--bwt, 100px) var(--bwr, 150px) var(--bwb, 110px) var(--bwl, 150px) round stretch;
+}
+.cab-frame::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 40px rgba(0,0,0,.35); }
+.cab-doors { position: absolute; top: var(--bwt, 100px); bottom: var(--bwb, 110px); left: var(--bwl, 150px); right: var(--bwr, 150px); overflow: hidden; }
+.cab-door { position: absolute; top: 0; bottom: 0; width: 50%; will-change: transform; background: linear-gradient(110deg, rgba(220,230,235,.22), rgba(220,230,235,.07) 38%, rgba(255,255,255,.17) 52%, rgba(220,230,235,.07) 64%); border: 0 solid #7d7f83; }
+.cab-door.l { left: 0; border-right-width: 3px; }
+.cab-door.r { right: 0; border-left-width: 3px; }
+.cab-door::after { content: ""; position: absolute; left: 0; right: 0; top: 46%; height: 1px; background: rgba(255,255,255,.3); }
+
+/* Etagenanzeige über der Tür */
+.cab-display { position: absolute; left: 50%; top: calc(var(--bwt, 100px) * .5); transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; gap: 12px; padding: 7px 16px; min-width: 220px; background: #0b0b0b; border: 1px solid #3a3a3c; color: #f0a93a; font: 400 13px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; text-shadow: 0 0 8px rgba(240, 169, 58, .6); box-shadow: 0 2px 10px rgba(0,0,0,.5); }
 .cab-display .arrow { width: 10px; text-align: center; }
 .cab-display .dnum { font-size: 18px; }
-.cab-sill { position: absolute; left: 0; right: 0; bottom: 0; height: 5%; min-height: 26px; background: linear-gradient(#a8aaae, #6d6f73 40%, #3a3b3e); border-top: 1px solid #d5d7da; }
-.cab-rail { position: absolute; left: 0; right: 0; bottom: 13%; height: 7px; background: linear-gradient(#f2f3f4, #9a9ca0 60%, #6a6c70); box-shadow: 0 3px 8px rgba(0,0,0,.35); }
-.cab-post { position: absolute; top: 0; bottom: 0; width: clamp(12px, 1.4vw, 22px); background: linear-gradient(90deg, #55575b, #c9cbce 45%, #7b7d81); }
-.cab-post.l { left: 0; } .cab-post.r { right: 0; }
-.cab-glass { position: absolute; top: 0; bottom: 0; background: linear-gradient(105deg, rgba(210,228,235,.12), rgba(210,228,235,.04) 40%, rgba(255,255,255,.1) 55%, rgba(210,228,235,.05)); }
-.cab-glass.l { left: 0; width: 17%; border-right: 5px solid #8d8f93; }
-.cab-glass.r { right: 0; width: 17%; border-left: 5px solid #8d8f93; }
-.cab-doors { position: absolute; top: 0; bottom: 0; left: 17%; right: 17%; overflow: hidden; }
-.cab-door { position: absolute; top: 0; bottom: 0; width: 50%; will-change: transform; background: linear-gradient(110deg, rgba(220,235,240,.2), rgba(220,235,240,.06) 38%, rgba(255,255,255,.16) 52%, rgba(220,235,240,.06) 64%); border: 0 solid #9a9ca0; }
-.cab-door.l { left: 0; border-right-width: 4px; }
-.cab-door.r { right: 0; border-left-width: 4px; }
-.cab-door::after { content: ""; position: absolute; left: 0; right: 0; top: 46%; height: 1px; background: rgba(255,255,255,.35); }
 
-/* Tastenfeld rechts neben der Tür */
+/* Tastenfeld an der rechten Wand, wie im Foto: eine Reihe runder Tasten */
 .cab-panel {
-  position: absolute; right: clamp(20px, 3.4vw, 56px); top: 50%; transform: translateY(-50%); pointer-events: auto;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; padding: 16px 14px 18px;
-  background: linear-gradient(90deg, #8f9195, #d2d4d7 40%, #a4a6aa); border-radius: 3px; box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.4);
+  position: absolute; right: calc(var(--bwr, 150px) * .2); top: calc(var(--bwt, 100px) + 3%); pointer-events: auto;
+  display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 12px 8px;
+  background: linear-gradient(90deg, #3d3e41, #5b5c60 45%, #444548); border: 1px solid #2a2b2d; border-radius: 3px;
+  box-shadow: inset 1px 0 0 rgba(255,255,255,.12), 0 4px 14px rgba(0,0,0,.35);
 }
-.cab-panel .ph-title { grid-column: 1 / -1; text-align: center; font: 400 9px/1 var(--mono); letter-spacing: .18em; color: #2b2c2e; margin-bottom: 4px; }
-.cab-panel button { position: relative; width: 38px; height: 38px; border-radius: 50%; justify-self: center; background: radial-gradient(circle at 35% 30%, #f7f7f8, #b8babd 60%, #8e9094); border: 1px solid #6e7074; box-shadow: 0 2px 3px rgba(0,0,0,.35); font: 500 12px/1 var(--mono); color: #222; transition: box-shadow .25s, color .25s; }
-.cab-panel button:hover { color: #000; box-shadow: 0 2px 3px rgba(0,0,0,.35), 0 0 0 2px rgba(240,169,58,.5); }
-.cab-panel button.on { color: #b86a00; box-shadow: 0 2px 3px rgba(0,0,0,.35), 0 0 0 2px #f0a93a, 0 0 14px rgba(240,169,58,.7); }
-.cab-panel button.lobby-btn { grid-column: 1 / -1; width: auto; min-width: 84px; border-radius: 20px; }
+.cab-panel .ph-title { display: none; }
+.cab-panel button { position: relative; width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #4a4b4f, #232426 70%); border: 1.5px solid #9a9ca0; box-shadow: 0 1px 2px rgba(0,0,0,.6); font: 500 11px/1 var(--mono); color: #e8e8e8; transition: box-shadow .25s, color .25s, border-color .25s; }
+.cab-panel button:hover { border-color: #f0a93a; }
+.cab-panel button.on { color: #f0a93a; border-color: #f0a93a; box-shadow: 0 0 0 2px rgba(240,169,58,.35), 0 0 12px rgba(240,169,58,.6); }
+.cab-panel button.lobby-btn { margin-top: 8px; }
 .cab-panel button[data-name]:hover::after { content: attr(data-name); position: absolute; right: calc(100% + 12px); top: 50%; transform: translateY(-50%); white-space: nowrap; background: #111; color: #fff; padding: 6px 9px; font-size: 11px; border-radius: 2px; pointer-events: none; }
+
+/* Inhalt der Etagen sitzt genau in der Türöffnung */
+.lvl .stage { top: var(--bwt, 11%); bottom: var(--bwb, 17%); left: var(--bwl, 0px); right: var(--bwr, 0px); padding: 2.2% 3% 0; }
+.lvl .store { width: 100%; }
+.lvl .ground { height: calc(var(--bwb, 17%) + 4%); }
+.lvl .floor-label { display: none; }
 
 .veil { position: fixed; inset: 0; z-index: 200; opacity: 0; pointer-events: none; }
 
 @media (max-width: 760px) {
-  .store { width: 90vw; }
-  .front { margin: 4% 5% 0; gap: 3%; grid-template-columns: 1fr 26% 1fr; }
-  .sign { width: 74%; }
-  .plate span:last-child { display: none; }
-  .lvl .floor-label { display: none; }
-  .lobby .stage { grid-template-columns: 1fr; align-content: center; gap: 18px; padding: 14px 64px 0 22px; }
-  .lobby h1 { font-size: 36px; }
-  .lobby .wp-text { margin-top: 10px; font-size: 13px; }
-  .directory-board { columns: 1; padding: 14px 16px; }
-  .directory-board li { padding: 3px 0; }
-  .cab-glass.l, .cab-glass.r { width: 6%; }
-  .cab-doors { left: 6%; right: 6%; }
-  .cab-display { min-width: 0; font-size: 11px; padding: 6px 10px; gap: 8px; }
-  .cab-panel { right: 10px; grid-template-columns: 1fr; gap: 5px; padding: 10px 7px; }
-  .cab-panel button { width: 30px; height: 30px; font-size: 10px; }
-  .cab-panel button.lobby-btn { min-width: 30px; }
-  .cab-panel .ph-title { display: none; }
+  .front { margin: 4% 4% 0; gap: 3%; grid-template-columns: 1fr 28% 1fr; }
+  .sign { width: 86%; margin-top: 5%; }
+  .sign-b { letter-spacing: .2em; padding-left: .2em; }
+  .plate span:last-child, .enter-hint { display: none; }
+  .win, .door { border-width: 4px; }
+  .lobby .stage { grid-template-columns: 1fr; align-content: center; gap: 14px; padding: 12px 12px 0; }
+  .lobby h1 { font-size: 30px; }
+  .lobby .wp-text { margin-top: 8px; font-size: 12px; }
+  .lobby .mono { font-size: 9px; }
+  .walk-hint { font-size: 10px; }
+  .directory-board { columns: 1; padding: 10px 12px; }
+  .directory-board li { padding: 2px 0; }
+  .directory-board a { font-size: 11px; gap: 8px; }
+  .cab-display { min-width: 0; font-size: 10px; padding: 5px 9px; gap: 7px; }
+  .cab-display .dnum { font-size: 14px; }
+  .cab-panel { gap: 5px; padding: 8px 5px; right: calc(var(--bwr) * .14); }
+  .cab-panel button { width: 26px; height: 26px; font-size: 9px; }
   .cab-panel button[data-name]:hover::after { display: none; }
 }
-@media (max-height: 640px) { .cab-panel { grid-template-columns: repeat(3, 1fr); } }
+@media (max-height: 700px) and (min-width: 761px) { .cab-panel { gap: 4px; padding: 8px 6px; } .cab-panel button { width: 26px; height: 26px; } }
 
 /* ---------- Ladenfassade ---------- */
 .store {
@@ -640,7 +650,7 @@ table.sizes-table { width: 100%; border-collapse: collapse; font-size: 13px; mar
 .lift-scene.static .cabin, .lift-scene.static .gap { display: none; }
 .lift-scene.static .shaft, .lift-scene.static .floors { position: static; transform: none; }
 .lift-scene.static .lvl { height: 560px; }
-.lift-scene.static .lvl .floor-label { opacity: 1; transform: none; }
+.lift-scene.static .lvl .stage { top: 6%; bottom: 12%; left: 4%; right: 4%; }
 
 /* ================================================================
    Im Laden: Etagen und Boden-Querschnitt

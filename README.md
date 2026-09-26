@@ -1,15 +1,36 @@
-# Klamotten-Website
+# Shop.Linus — Die Passage der Marken
 
-Online-Shop für eine Kleidungsmarke im Stil von Luxus-Websites: ruhig, viel Weißraum, Serifen-Überschriften, kleine Monospace-Details (angelehnt an die IGLOO-Referenz unten). Status: **Schritt 1 fertig: die Website funktioniert.** Die Näh-Animation kommt ganz am Ende.
+Online-Shop für Kleidung verschiedener Marken. Die Startseite ist ein **Gang mit 10 Läden**: Man schaut gegen die Wand mit den Ladenfronten, jeder Scroll ist ein Schritt zur Seite. Ein Klick auf eine Tür öffnet sie, die Kamera fährt hinein, und man steht im Laden. Dort geht es über drei Etagen (Damen, Herren, Unisex) zu den Abteilungen. Zwischen den Etagen erscheint der Boden im Querschnitt.
 
-Lokal ansehen: `index.html` im Browser öffnen, oder im Ordner `python3 -m http.server` starten und `http://localhost:8000` aufrufen.
+Status: **Passage, Läden, Shop, Warenkorb und Kasse funktionieren (Testbetrieb).** Marken, Ladenbilder und Produkte sind Platzhalter. Die Näh-Animation kommt ganz am Ende.
+
+Lokal ansehen: im Ordner `python3 -m http.server` starten und `http://localhost:8000` aufrufen.
+
+## Die Passage
+
+| Was | Wie |
+|---|---|
+| Gehen | Scrollen oder Wischen (auch auf dem Handy nach oben/unten), Pfeiltasten ← →, oder die Striche unten anklicken |
+| Stehenbleiben | Die Ansicht rastet vor jedem Laden ein, das Schaufenster wird heller, „Eintreten“ erscheint |
+| Eintreten | Klick auf den Laden: Türen gehen auf, Fahrt durch die Tür, Überblendung in die Ladenfarbe |
+| Im Laden | Etagenknöpfe wie im Aufzug, Aufzugsanzeige rechts, Regale je Abteilung führen zu den gefilterten Artikeln |
+| Zurück | „Zurück in die Passage“ oder die Zurück-Taste: Man steht wieder vor demselben Laden |
+| Abkürzung | „Marken“ im Menü listet alle Läden, Damen/Herren/Unisex führen direkt zu den Artikeln |
+| Bewegung reduziert | Wer das im System eingestellt hat, sieht die Läden als ruhiges Raster ohne Animation |
+
+**Marken ändern:** `BRANDS` in `assets/data.js`. Pro Marke: Name, Farben (Wand, Zierleisten, Schild, Innenraum), Fassadenmaterial (`panel`, `stone`, `metal`, `brick`, `plaster`, `concrete`, `marble`), Fensterform (`rect`, `arch`), Schrift (`serif`, `sans`, `mono`), Markise.
+
+**Produkte:** Solange es keine echten gibt, erzeugt `assets/data.js` pro Marke 13 Platzhalter (5 Damen, 5 Herren, 3 Unisex) aus `PRODUCT_TEMPLATES`. Echte Produkte bekommen die Felder `brand` (z. B. `"b03"`) und `gender` (`damen`, `herren`, `unisex`).
+
+**Bibliotheken:** GSAP + ScrollTrigger (Gehen, Einrasten, Etagen), Lenis (weiches Scrollen), View Transitions (Seitenübergänge). Alles lokal in `assets/vendor/`. GSAP Flip liegt bereit für spätere Übergänge.
 
 ## Was schon funktioniert
 
 | Bereich | Datei | Funktionen |
 |---|---|---|
-| Startseite | `index.html` | Hero, Kategorien, Neuheiten, Atelier-Teil, Klassiker, Versprechen, Newsletter |
-| Kollektion | `shop.html` | Kategorien, Neuheiten, Filter (Farbe, Größe, Preis), Sortierung, Suche (`?q=`), Filter bleiben in der URL |
+| Passage | `index.html` | Gang mit 10 Läden, danach Neuheiten, Versprechen, Newsletter |
+| Laden | `laden.html?marke=…` | Foyer mit Schild, 3 Etagen mit Regalen, Boden-Querschnitt, Nachbarläden |
+| Artikel | `shop.html` | Abteilungen (Damen, Herren, Unisex), Neuheiten, Filter (Kategorie, Marke, Farbe, Größe, Preis), Sortierung, Suche (`?q=`), Filter bleiben in der URL |
 | Produktseite | `produkt.html?id=…` | 3 Bilder mit Zoom, Farbwahl, Größenwahl (ausverkaufte Größen gesperrt), Größentabelle, Merkliste, Details, ähnliche Artikel |
 | Warenkorb | Schublade + `warenkorb.html` | Menge ändern, entfernen, auf die Merkliste verschieben, Rabattcode (`WILLKOMMEN10` = 10 %), Geschenkverpackung, Anzeige bis zum Gratisversand |
 | Kasse | `kasse.html` | Kontakt, Adresse mit Prüfung (auch PLZ je Land), Standard/Express, Zahlungsart, AGB-Pflichthaken, Button „Zahlungspflichtig bestellen“, Bestellbestätigung mit Nummer |
@@ -22,14 +43,14 @@ Warenkorb und Merkliste bleiben im Browser gespeichert (Local Storage), auch üb
 
 ## Anpassen
 
-- **Markenname:** in `assets/data.js` → `SHOP.brand` (Platzhalter „ATELIER“). Er erscheint dann überall.
+- **Name der Passage:** in `assets/data.js` → `SHOP.brand` (Platzhalter „ATELIER“).
 - **Produkte, Preise, Farben, Größen, ausverkaufte Größen:** alles in `assets/data.js`.
 - **Versandkosten, Gratisversand-Grenze, Rabattcodes:** `SHOP` in `assets/data.js`.
 - **Produktbilder:** sind vorerst gezeichnete SVG-Platzhalter (`assets/garments.js`). Sobald es Fotos gibt, werden sie ersetzt.
 
 ## Was vor dem echten Start noch fehlt
 
-1. Markenname, Logo, echte Produktfotos und Texte
+1. Echte Marken (nur als autorisierter Händler, Logos nur mit Erlaubnis), Ladenbilder, Produktfotos und Texte
 2. Zahlung und Bestellungen wirklich abwickeln, z. B. mit Shopify (Storefront API), Stripe Checkout oder Snipcart. Aktuell ist das ein **Testbetrieb**: Es wird nichts abgebucht und nichts versendet.
 3. Kontakt- und Newsletterformular an einen Dienst anbinden
 4. Impressum, Datenschutz, AGB und Widerruf mit echten Angaben füllen und prüfen lassen

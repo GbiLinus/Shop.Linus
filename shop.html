@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kollektion — ATELIER</title>
-<meta name="description" content="Die ganze Kollektion: Mäntel, Strick, Hemden, Hosen und Accessoires.">
+<meta name="description" content="Alle Artikel aller Marken der Passage: Damen, Herren und Unisex.">
 <meta name="theme-color" content="#f7f6f3">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23151515'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='18' fill='%23fff' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
@@ -14,7 +14,8 @@
 <main id="main">
 <header class="page-head wrap">
   <nav class="crumbs" id="shop-crumbs" aria-label="Brotkrumen"></nav>
-  <h1 id="shop-title">Kollektion</h1>
+  <div id="shop-store"></div>
+  <h1 id="shop-title">Alle Artikel</h1>
   <p class="mono" id="shop-count"></p>
 </header>
 <div class="toolbar">
@@ -34,6 +35,8 @@
 </div>
 <div class="filter-panel" id="filter-panel">
   <div class="wrap">
+    <div><h4 class="caps">Kategorie</h4><div class="opt-list" id="filter-cats"></div></div>
+    <div><h4 class="caps">Marke</h4><div class="opt-list" id="filter-brands"></div></div>
     <div><h4 class="caps">Farbe</h4><div class="opt-list" id="filter-colors"></div></div>
     <div><h4 class="caps">Größe</h4><div class="opt-list" id="filter-sizes"></div></div>
     <div><h4 class="caps">Preis</h4><div class="opt-list" id="filter-prices"></div></div>

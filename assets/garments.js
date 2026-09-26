@@ -300,7 +300,7 @@ function textureDefs(id, kind, c) {
       <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .35 0"/></filter>`;
 }
 
-function garmentSVG(type, hex, view = "front") {
+function garmentSVG(type, hex, view = "front", opts = {}) {
   const g = GARMENTS[type];
   const id = ++svgUid;
   const light = luminance(hex) > 0.72;
@@ -331,14 +331,14 @@ function garmentSVG(type, hex, view = "front") {
     texKind === "knit"
       ? `<path d="${parts.body}" fill="url(#tx${id})"/>`
       : `<g clip-path="url(#cl${id})"><rect width="400" height="500" filter="url(#tx${id}f)" opacity=".5"/></g>`;
-  return `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+  return `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" preserveAspectRatio="${opts.transparent ? "xMidYMid meet" : "xMidYMid slice"}">
     <defs>${textureDefs(id, texKind, hex)}
       <clipPath id="cl${id}"><path d="${parts.body}"/></clipPath>
       <linearGradient id="sh${id}" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
       <radialGradient id="fl${id}"><stop offset="0" stop-color="#000" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
     </defs>
-    <rect x="-200" y="-200" width="800" height="900" fill="${bg}"/>
+    ${opts.transparent ? "" : `<rect x="-200" y="-200" width="800" height="900" fill="${bg}"/>`}
     <ellipse cx="200" cy="482" rx="150" ry="14" fill="url(#fl${id})"/>
     <g class="garment">
       ${parts.before || ""}

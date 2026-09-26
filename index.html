@@ -4,77 +4,52 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ATELIER</title>
-<meta name="description" content="Zeitlose Kleidung aus den besten Materialien. Kollektion N°01, Herbst/Winter 2026.">
+<meta name="description" content="Die Passage der Marken: an zehn Läden vorbeigehen und eintreten.">
 <meta name="theme-color" content="#f7f6f3">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23151515'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='18' fill='%23fff' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/vendor/lenis.css">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body data-page="home" class="home">
 <main id="main">
-<section class="hero">
-  <span class="corner tl">N°01 / Herbst–Winter 2026<br>Kollektion</span>
-  <span class="corner tr">Wolle · Kaschmir · Leinen<br>Gefertigt in Europa</span>
-  <div class="hero-copy">
-    <p class="eyebrow">Neue Kollektion</p>
-    <h1>Kleidung, die<br><em>bleibt.</em></h1>
-    <p>Wenige Teile, aus den besten Stoffen, mit der Hand vollendet. Gemacht, um Jahre getragen zu werden.</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <a class="btn" href="shop.html">Kollektion entdecken</a>
-      <a class="btn ghost" href="shop.html?neu=1">Neuheiten</a>
+<section class="passage" id="passage" aria-label="Die Passage">
+  <div class="scene">
+    <div class="ceiling"><div class="ceiling-plane"></div></div>
+    <div class="wall">
+      <div class="track" id="track"></div>
     </div>
+    <div class="floor"><div class="floor-plane"></div></div>
+    <div class="fg" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   </div>
-  <div class="hero-art" id="hero-art" aria-hidden="true"></div>
-  <span class="corner bl scroll-hint">Scrollen</span>
-  <span class="corner br">Doppelreihiger Wollmantel<br>Kamel</span>
+  <div class="hud">
+    <div class="hud-left"><span class="mono" id="hud-n">Eingang</span><span class="hud-name" id="hud-name">ATELIER</span></div>
+    <div class="hud-ticks" id="hud-ticks"></div>
+    <div class="hud-right"><button class="caps link" data-action="brands">Alle Marken</button><span class="mono hud-hint">Scrollen = gehen · Klick = eintreten</span></div>
+  </div>
 </section>
+<div class="veil" id="veil" aria-hidden="true"></div>
 
 <section class="section wrap">
   <div class="section-head">
-    <div><span class="eyebrow">Kategorien</span><h2>Die Garderobe</h2></div>
-    <a class="link caps" href="shop.html">Alle ansehen</a>
-  </div>
-  <div class="cats" id="home-cats"></div>
-</section>
-
-<section class="section wrap" style="padding-top:0">
-  <div class="section-head">
-    <div><span class="eyebrow">Gerade eingetroffen</span><h2>Neuheiten</h2></div>
+    <div><span class="eyebrow">Gerade eingetroffen</span><h2>Neu in der Passage</h2></div>
     <a class="link caps" href="shop.html?neu=1">Alle Neuheiten</a>
   </div>
   <div class="grid" id="home-new"></div>
-</section>
-
-<section class="editorial">
-  <div class="img" id="home-editorial" aria-hidden="true"></div>
-  <div class="txt reveal">
-    <span class="eyebrow">Das Atelier</span>
-    <h2>Jede Naht<br>hat einen Grund.</h2>
-    <p>Wir arbeiten mit kleinen Familienbetrieben in Italien, Portugal und Schottland. Jedes Teil geht durch viele Hände, bevor es zu Ihnen kommt. Wir nehmen uns die Zeit, die gute Kleidung braucht.</p>
-    <a class="link caps" href="ueber-uns.html" style="align-self:flex-start">Mehr über uns</a>
-  </div>
-</section>
-
-<section class="section wrap">
-  <div class="section-head">
-    <div><span class="eyebrow">Das ganze Jahr</span><h2>Die Klassiker</h2></div>
-    <a class="link caps" href="shop.html">Zur Kollektion</a>
-  </div>
-  <div class="grid" id="home-classics"></div>
 </section>
 
 <section class="wrap">
   <div class="promises">
     <div><strong>Kostenloser Versand</strong><span>ab 250 € innerhalb der EU</span></div>
     <div><strong>30 Tage Rückgabe</strong><span>kostenlos und unkompliziert</span></div>
-    <div><strong>Sichere Zahlung</strong><span>Kreditkarte, PayPal, Rechnung</span></div>
+    <div><strong>Nur Originalware</strong><span>direkt von den Marken</span></div>
     <div><strong>Persönliche Beratung</strong><span>per E-Mail und Telefon</span></div>
   </div>
 </section>
 
 <section class="section wrap newsletter">
   <span class="eyebrow">Newsletter</span>
-  <h2 style="margin-top:14px">Als Erste erfahren</h2>
+  <h2 style="margin-top:14px">Neue Läden zuerst erfahren</h2>
   <form data-form="newsletter" novalidate>
     <label class="sr-only" for="nl-home">E-Mail-Adresse</label>
     <input id="nl-home" type="email" placeholder="E-Mail-Adresse" autocomplete="email">
@@ -83,6 +58,9 @@
   <div class="form-note" aria-live="polite"></div>
 </section>
 </main>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
 <script src="assets/data.js"></script>
 <script src="assets/garments.js"></script>
 <script src="assets/app.js"></script>

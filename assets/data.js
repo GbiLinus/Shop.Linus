@@ -3,10 +3,10 @@
    Hier wird alles gepflegt, was sich inhaltlich ändert.
    ================================================================ */
 
-// Platzhalter, bis die Marke einen Namen hat. Nur hier ändern.
+// Name der Passage (des Shops). Platzhalter, nur hier ändern.
 const SHOP = {
   brand: "ATELIER",
-  claim: "Kollektion N°01 — Herbst / Winter 2026",
+  claim: "Die Passage der Marken",
   freeShippingFrom: 250,
   shipping: {
     standard: { label: "Standardversand", time: "2–4 Werktage", price: 15 },
@@ -44,7 +44,8 @@ const COLORS = {
 const SIZES = ["XS", "S", "M", "L", "XL"];
 const ONE_SIZE = ["Einheitsgröße"];
 
-const PRODUCTS = [
+// Vorlagen für Platzhalter-Produkte. Echte Produkte kommen später pro Marke.
+const PRODUCT_TEMPLATES = [
   {
     id: "wollmantel",
     name: "Doppelreihiger Wollmantel",
@@ -333,3 +334,60 @@ const PRODUCTS = [
     origin: "Gefertigt in Schottland.",
   },
 ];
+
+
+/* ================================================================
+   Marken (Läden in der Passage) — Platzhalter
+   Jede Marke bekommt ihre typischen Farben und eine eigene Fassade.
+   material: panel | stone | metal | brick | plaster | concrete | marble
+   window:   rect | arch
+   font:     serif | sans | mono
+   ================================================================ */
+const BRANDS = [
+  { id: "b01", name: "Brand 01", wall: "#1f2a44", trim: "#c9a86a", signBg: "#f3ecdc", signFg: "#1f2a44", interior: "#f3ecdc", ink: "#1f2a44", material: "panel", window: "rect", font: "serif", awning: ["#1f2a44", "#f3ecdc"], favorites: ["marine", "ecru", "weiss"], price: 1.0 },
+  { id: "b02", name: "Brand 02", wall: "#1e3a2f", trim: "#b8955a", signBg: "#1e3a2f", signFg: "#d9bf86", interior: "#eee9dd", ink: "#1e3a2f", material: "panel", window: "arch", font: "serif", awning: null, favorites: ["salbei", "kamel", "ecru"], price: 1.1 },
+  { id: "b03", name: "Brand 03", wall: "#121212", trim: "#f4f2ed", signBg: "#121212", signFg: "#f4f2ed", interior: "#f4f2ed", ink: "#121212", material: "metal", window: "rect", font: "sans", awning: null, favorites: ["schwarz", "weiss", "anthrazit"], price: 1.25 },
+  { id: "b04", name: "Brand 04", wall: "#e8dcc6", trim: "#4a2e1f", signBg: "#4a2e1f", signFg: "#e8792f", interior: "#f2e8d8", ink: "#4a2e1f", material: "stone", window: "rect", font: "serif", awning: ["#e8792f", "#e8792f"], favorites: ["kamel", "schoko", "beige"], price: 1.4 },
+  { id: "b05", name: "Brand 05", wall: "#5a1a24", trim: "#d8c3a5", signBg: "#d8c3a5", signFg: "#5a1a24", interior: "#f1e9e1", ink: "#5a1a24", material: "panel", window: "arch", font: "serif", awning: null, favorites: ["schoko", "ecru", "schwarz"], price: 1.15 },
+  { id: "b06", name: "Brand 06", wall: "#d6c5a4", trim: "#8a6a45", signBg: "#8a6a45", signFg: "#f5eee0", interior: "#f5eee0", ink: "#5f4a31", material: "stone", window: "rect", font: "sans", awning: null, favorites: ["kamel", "beige", "ecru"], price: 1.2 },
+  { id: "b07", name: "Brand 07", wall: "#cfdde6", trim: "#ffffff", signBg: "#ffffff", signFg: "#3b5566", interior: "#eef3f6", ink: "#3b5566", material: "plaster", window: "arch", font: "mono", awning: ["#3b5566", "#ffffff"], favorites: ["eisblau", "weiss", "grau"], price: 0.9 },
+  { id: "b08", name: "Brand 08", wall: "#4a4b4e", trim: "#b87333", signBg: "#2b2b2d", signFg: "#d08a4a", interior: "#e9e7e3", ink: "#2b2b2d", material: "concrete", window: "rect", font: "mono", awning: null, favorites: ["anthrazit", "grau", "schwarz"], price: 0.95 },
+  { id: "b09", name: "Brand 09", wall: "#8c3b2a", trim: "#1c1c1c", signBg: "#1c1c1c", signFg: "#f4f2ed", interior: "#f3eee8", ink: "#1c1c1c", material: "brick", window: "rect", font: "sans", awning: ["#1c1c1c", "#1c1c1c"], favorites: ["schwarz", "beige", "marine"], price: 0.85 },
+  { id: "b10", name: "Brand 10", wall: "#eeeae3", trim: "#6f7d68", signBg: "#6f7d68", signFg: "#ffffff", interior: "#f4f3ef", ink: "#4d5848", material: "marble", window: "arch", font: "serif", awning: null, favorites: ["salbei", "ecru", "weiss"], price: 1.05 },
+];
+
+// Abteilungen im Laden: jede Etage eine Abteilung
+const DEPARTMENTS = [
+  { id: "damen", name: "Damen", floor: "EG", floorName: "Erdgeschoss" },
+  { id: "herren", name: "Herren", floor: "1", floorName: "1. Obergeschoss" },
+  { id: "unisex", name: "Unisex", floor: "2", floorName: "2. Obergeschoss" },
+];
+
+/* Platzhalter-Katalog: pro Marke je 5 Teile Damen, 5 Teile Herren,
+   3 Teile Unisex, erzeugt aus den Vorlagen. Wird ersetzt, sobald
+   echte Produkte da sind. */
+const PRODUCTS = (() => {
+  const apparel = ["wollmantel", "trenchcoat", "blazer", "kaschmir-pullover", "cardigan", "zopfstrick", "popelinehemd", "leinenhemd", "tshirt", "bundfaltenhose", "leinenhose"];
+  const unisex = ["hoodie", "oversized-tshirt", "kaschmirschal", "tote-bag", "muetze", "tshirt"];
+  const tpl = (id) => PRODUCT_TEMPLATES.find((t) => t.id === id);
+  const out = [];
+  BRANDS.forEach((b, bi) => {
+    const make = (t, gender, k) => {
+      const colors = [...new Set([...b.favorites.filter((c) => (k + bi) % 2 === 0 || c !== b.favorites[2]), ...t.colors])].slice(0, 3);
+      out.push({
+        ...t,
+        id: `${b.id}-${gender}-${t.id}`,
+        brand: b.id,
+        gender,
+        price: Math.round((t.price * b.price) / 10) * 10,
+        colors,
+        isNew: (bi + k) % 4 === 0,
+        added: `2026-0${1 + ((bi + k) % 9)}-1${k % 10}`,
+      });
+    };
+    for (let k = 0; k < 5; k++) make(tpl(apparel[(bi + k * 2) % apparel.length]), "damen", k);
+    for (let k = 0; k < 5; k++) make(tpl(apparel[(bi + 1 + k * 2) % apparel.length]), "herren", k + 5);
+    for (let k = 0; k < 3; k++) make(tpl(unisex[(bi + k * 2) % unisex.length]), "unisex", k + 10);
+  });
+  return out;
+})();

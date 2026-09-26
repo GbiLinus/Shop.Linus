@@ -16,6 +16,10 @@
   const page = document.body.dataset.page || "";
   const byId = (id) => PRODUCTS.find((p) => p.id === id);
   const catName = (id) => (CATEGORIES.find((c) => c.id === id) || {}).name || "";
+  const brandOf = (id) => BRANDS.find((b) => b.id === id);
+  const brandName = (id) => (brandOf(id) || {}).name || "";
+  const deptName = (id) => (DEPARTMENTS.find((d) => d.id === id) || {}).name || "";
+  const storeUrl = (id) => `laden.html?marke=${id}`;
   const colorOf = (key) => COLORS[key] || { name: key, hex: "#999" };
   const productUrl = (p, color) => `produkt.html?id=${encodeURIComponent(p.id)}${color ? `&farbe=${color}` : ""}`;
   const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
@@ -120,10 +124,8 @@
   /* ---------- Layout ---------- */
   function navLinks() {
     return [
-      ["shop.html?neu=1", "Neuheiten", page === "shop" && params.get("neu")],
-      ["shop.html", "Kollektion", page === "shop" && !params.get("neu") && params.get("kategorie") !== "accessoires"],
-      ["shop.html?kategorie=accessoires", "Accessoires", page === "shop" && params.get("kategorie") === "accessoires"],
-      ["ueber-uns.html", "Atelier", page === "ueber-uns"],
+      ["index.html", "Passage", page === "home"],
+      ...DEPARTMENTS.map((d) => [`shop.html?abteilung=${d.id}`, d.name, page === "shop" && params.get("abteilung") === d.id]),
     ];
   }
 
@@ -137,6 +139,7 @@
           <div>
             <nav class="nav" aria-label="Hauptnavigation">
               ${links.map(([h, t, a]) => `<a href="${h}"${a ? ' aria-current="page"' : ""}>${t}</a>`).join("")}
+              <a href="#marken" data-action="brands"${page === "laden" ? ' aria-current="page"' : ""}>Marken</a>
             </nav>
             <button class="menu-btn icon-btn" data-action="menu" aria-label="Menü öffnen">${ICON.menu}</button>
           </div>
@@ -157,7 +160,7 @@
           <div class="cols">
             <div class="newsletter" style="text-align:left">
               <a class="logo" href="index.html">${esc(SHOP.brand)}</a>
-              <p>Neue Kollektionen, Einladungen und Geschichten aus dem Atelier. Höchstens einmal im Monat.</p>
+              <p>Neue Marken, neue Kollektionen und Einladungen aus der Passage. Höchstens einmal im Monat.</p>
               <form data-form="newsletter" novalidate>
                 <label class="sr-only" for="nl-foot">E-Mail-Adresse</label>
                 <input id="nl-foot" type="email" placeholder="E-Mail-Adresse" autocomplete="email">
@@ -172,8 +175,10 @@
               <li><a href="service.html#groessen">Größentabelle</a></li>
               <li><a href="service.html#faq">Häufige Fragen</a></li></ul></div>
             <div><h4 class="caps">Entdecken</h4><ul>
+              <li><a href="index.html">Passage</a></li>
+              ${DEPARTMENTS.map((d) => `<li><a href="shop.html?abteilung=${d.id}">${d.name}</a></li>`).join("")}
               <li><a href="shop.html?neu=1">Neuheiten</a></li>
-              ${CATEGORIES.map((c) => `<li><a href="shop.html?kategorie=${c.id}">${c.name}</a></li>`).join("")}</ul></div>
+              <li><a href="ueber-uns.html">Über uns</a></li></ul></div>
             <div><h4 class="caps">Rechtliches</h4><ul>
               <li><a href="impressum.html">Impressum</a></li>
               <li><a href="datenschutz.html">Datenschutz</a></li>
@@ -192,11 +197,11 @@
       <aside class="drawer" id="drawer" aria-label="Warenkorb" aria-hidden="true">
         <div class="drawer-head"><span class="caps">Warenkorb <span class="mono" data-count="cart"></span></span>
           <button data-action="close" aria-label="Schließen">${ICON.close}</button></div>
-        <div class="drawer-body" id="drawer-body"></div>
+        <div class="drawer-body" id="drawer-body" data-lenis-prevent></div>
         <div class="drawer-foot" id="drawer-foot"></div>
       </aside>
 
-      <div class="search" id="search" aria-hidden="true">
+      <div class="search" id="search" aria-hidden="true" data-lenis-prevent>
         <div class="wrap">
           <form action="shop.html" role="search">
             <label class="sr-only" for="q">Suche</label>
@@ -207,17 +212,18 @@
         </div>
       </div>
 
-      <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <div class="mobile-menu" id="mobile-menu" aria-hidden="true" data-lenis-prevent>
         <div class="top"><span class="logo">${esc(SHOP.brand)}</span><button data-action="close" aria-label="Menü schließen">${ICON.close}</button></div>
         <nav aria-label="Mobile Navigation">
+          <a href="index.html">Passage</a>
+          ${DEPARTMENTS.map((d) => `<a href="shop.html?abteilung=${d.id}">${d.name}</a>`).join("")}
+          <a href="#marken" data-action="brands">Marken</a>
           <a href="shop.html?neu=1">Neuheiten</a>
-          ${CATEGORIES.map((c) => `<a href="shop.html?kategorie=${c.id}">${c.name}</a>`).join("")}
-          <a href="ueber-uns.html">Atelier</a>
         </nav>
         <div class="small caps"><a href="merkliste.html">Merkliste</a><a href="kontakt.html">Kontakt</a><a href="service.html">Kundenservice</a></div>
       </div>
 
-      <div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true" data-lenis-prevent>
         <div class="box"><button class="close" data-action="close" aria-label="Schließen">${ICON.close}</button><div id="modal-body"></div></div>
       </div>
 
@@ -242,6 +248,7 @@
     lastFocus = document.activeElement;
     el.classList.add("open");
     el.setAttribute("aria-hidden", "false");
+    if (lenis) lenis.stop();
     if (el.id !== "search" && el.id !== "mobile-menu") $(".scrim").classList.add("open");
     document.body.classList.add("locked");
     const f = el.querySelector("input, button, a");
@@ -253,6 +260,7 @@
       el.setAttribute("aria-hidden", "true");
     });
     document.body.classList.remove("locked");
+    if (lenis && !document.querySelector(".entering")) lenis.start();
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
     lastFocus = null;
   }
@@ -285,11 +293,26 @@
         </a>
         <button class="wish" data-action="wish" data-id="${p.id}" aria-pressed="${wished}" aria-label="${esc(p.name)} auf die Merkliste">${ICON.heart}</button>
         <div class="info">
+          <a class="brand-line" href="${storeUrl(p.brand)}">${esc(brandName(p.brand))}</a>
           <a class="name" href="${productUrl(p)}">${esc(p.name)}</a>
           <span class="price">${euro(p.price)}</span>
           ${opts.noColors ? "" : `<div class="colors">${p.colors.map((c) => `<span class="dot" style="background:${colorOf(c).hex}" title="${colorOf(c).name}"></span>`).join("")}<span>${p.colors.length > 1 ? `${p.colors.length} Farben` : colorOf(color).name}</span></div>`}
         </div>
       </article>`;
+  }
+
+  function brandsList() {
+    return `
+      <h3>Alle Marken</h3>
+      <p class="mono" style="margin:8px 0 20px">${BRANDS.length} Läden in der Passage</p>
+      <div class="brand-list">
+        ${BRANDS.map(
+          (b, i) => `<a href="${storeUrl(b.id)}" style="--sb:${b.signBg};--sf:${b.signFg}">
+            <span class="mono">N°${String(i + 1).padStart(2, "0")}</span><span class="bl-name">${esc(b.name)}</span>
+            <span class="bl-sw"></span></a>`
+        ).join("")}
+      </div>
+      <p style="margin-top:20px"><a class="link caps" href="shop.html">Alle Artikel aller Marken</a></p>`;
   }
 
   function sizeTable() {
@@ -317,7 +340,7 @@
         <a class="thumb" href="${productUrl(p, i.color)}">${garmentSVG(p.type, colorOf(i.color).hex)}</a>
         <div class="meta">
           <div style="display:flex;justify-content:space-between;gap:12px"><a href="${productUrl(p, i.color)}">${esc(p.name)}</a><span>${euro(p.price * i.qty)}</span></div>
-          <span class="sub">${colorOf(i.color).name} · ${esc(i.size)}</span>
+          <span class="sub">${esc(brandName(p.brand))} · ${colorOf(i.color).name} · ${esc(i.size)}</span>
           ${i.qty > 1 ? `<span class="sub">${euro(p.price)} pro Stück</span>` : ""}
           <div class="row">
             <div class="qty" aria-label="Anzahl">
@@ -363,7 +386,7 @@
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
     if (!terms.length) return [];
     return PRODUCTS.filter((p) => {
-      const hay = [p.name, catName(p.category), p.material, p.description, ...p.colors.map((c) => colorOf(c).name)].join(" ").toLowerCase();
+      const hay = [p.name, brandName(p.brand), deptName(p.gender), catName(p.category), p.material, p.description, ...p.colors.map((c) => colorOf(c).name)].join(" ").toLowerCase();
       return terms.every((t) => hay.includes(t));
     });
   }
@@ -414,6 +437,10 @@
         toast("Auf die Merkliste verschoben.");
         rerenderCartViews();
       } else if (a === "size-chart") openModal(sizeTable());
+      else if (a === "brands") {
+        e.preventDefault();
+        openModal(brandsList());
+      }
     });
 
     document.addEventListener("keydown", (e) => {
@@ -488,25 +515,364 @@
      ================================================================ */
 
   function renderHome() {
-    const heroArt = $("#hero-art");
-    if (heroArt) heroArt.innerHTML = garmentSVG("coat", colorOf("kamel").hex).replace("xMidYMid slice", "xMidYMid meet");
-    const cats = [
-      ["oberbekleidung", "trench", "beige"],
-      ["strick", "cable", "ecru"],
-      ["accessoires", "bag", "schoko"],
-    ];
-    $("#home-cats").innerHTML = cats
-      .map(
-        ([id, type, col]) => `
-        <a class="cat reveal" href="shop.html?kategorie=${id}">
-          ${garmentSVG(type, colorOf(col).hex)}
-          <span class="cat-label"><span>${catName(id)}</span><span class="caps">Entdecken</span></span>
-        </a>`
-      )
-      .join("");
-    $("#home-new").innerHTML = PRODUCTS.filter((p) => p.isNew).slice(0, 4).map((p) => productCard(p)).join("");
-    $("#home-classics").innerHTML = ["kaschmir-pullover", "popelinehemd", "bundfaltenhose", "kaschmirschal"].map((id) => productCard(byId(id))).join("");
-    $("#home-editorial").innerHTML = garmentSVG("shirt", colorOf("weiss").hex, "detail");
+    const fresh = [];
+    BRANDS.forEach((b) => {
+      const p = PRODUCTS.find((x) => x.brand === b.id && x.isNew && !fresh.includes(x));
+      if (p && fresh.length < 4) fresh.push(p);
+    });
+    $("#home-new").innerHTML = fresh.map((p) => productCard(p)).join("");
+    renderPassage();
+  }
+
+  /* ---------- Weiches Scrollen (Lenis) ---------- */
+  let lenis = null;
+  function initSmooth() {
+    if (lenis || !window.Lenis || matchMedia("(prefers-reduced-motion: reduce)").matches) return lenis;
+    lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.9 });
+    if (window.gsap && window.ScrollTrigger) {
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((t) => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      const raf = (t) => {
+        lenis.raf(t);
+        requestAnimationFrame(raf);
+      };
+      requestAnimationFrame(raf);
+    }
+    return lenis;
+  }
+  function scrollToY(y, opts = {}) {
+    if (lenis) lenis.scrollTo(y, { duration: 1.2, ...opts });
+    else window.scrollTo({ top: y, behavior: opts.immediate ? "auto" : "smooth" });
+  }
+
+  /* ---------- Die Passage (Startseite) ---------- */
+  function storeFacade(b, i) {
+    const n = String(i + 1).padStart(2, "0");
+    const own = PRODUCTS.filter((p) => p.brand === b.id);
+    const pick = (g) => own.find((p) => p.gender === g) || own[0];
+    const win = (p) => `
+      <div class="win">
+        <div class="win-in">
+          <span class="spot"></span>
+          ${garmentSVG(p.type, colorOf(p.colors[0]).hex, "front", { transparent: true })}
+          <span class="plinth"></span>
+        </div>
+        <span class="glass"></span>
+      </div>`;
+    const vars = `--wall:${b.wall};--trim:${b.trim};--sb:${b.signBg};--sf:${b.signFg};--int:${b.interior}${b.awning ? `;--aw1:${b.awning[0]};--aw2:${b.awning[1]}` : ""}`;
+    return `
+      <a class="store" href="${storeUrl(b.id)}" id="laden-${b.id}" data-brand="${b.id}" data-material="${b.material}" data-window="${b.window}" data-font="${b.font}" style="${vars}" aria-label="${esc(b.name)} betreten">
+        <div class="sign"><span class="sign-n">N°${n}</span><span class="sign-b">${esc(b.name)}</span></div>
+        ${b.awning ? `<div class="awning"></div>` : ""}
+        <div class="front">
+          ${win(pick("damen"))}
+          <div class="door"><span class="leaf l"></span><span class="leaf r"></span></div>
+          ${win(pick("herren"))}
+        </div>
+        <div class="plate"><span>${esc(b.name)}</span><span>Damen · Herren · Unisex</span></div>
+        <span class="enter-hint caps">Eintreten</span>
+      </a>`;
+  }
+
+  function directory() {
+    return `<ol class="directory-board">${BRANDS.map((b, i) => `<li><a href="${storeUrl(b.id)}" data-jump="${b.id}"><span class="mono">${String(i + 1).padStart(2, "0")}</span>${esc(b.name)}</a></li>`).join("")}</ol>`;
+  }
+
+  function renderPassage() {
+    const root = $("#passage");
+    if (!root) return;
+    const track = $("#track");
+    track.innerHTML =
+      `<div class="wall-panel entrance">
+         <p class="mono">Eingang · ${BRANDS.length} Läden</p>
+         <h1>${esc(SHOP.brand)}<br><em>Die Passage der Marken</em></h1>
+         <p class="wp-text">Schlendern Sie an den Läden vorbei. Jeder Scroll ist ein Schritt. Ein Klick auf eine Tür, und Sie sind drin.</p>
+         <span class="walk-hint caps">Scrollen, um zu gehen</span>
+       </div><span class="pillar"></span>` +
+      BRANDS.map((b, i) => storeFacade(b, i) + `<span class="pillar"></span>`).join("") +
+      `<div class="wall-panel exit">
+         <p class="mono">Ende der Passage</p>
+         <h2>Alle Läden<br>auf einen Blick</h2>
+         ${directory()}
+         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn" href="shop.html">Alle Artikel</a><button class="btn ghost" data-jump="start">Zurück zum Eingang</button></div>
+       </div>`;
+
+    const stores = $$(".store", track);
+    const hudName = $("#hud-name");
+    const hudN = $("#hud-n");
+    const ticks = $("#hud-ticks");
+    ticks.innerHTML = BRANDS.map((b) => `<button data-jump="${b.id}" aria-label="Zu ${esc(b.name)} gehen"></button>`).join("");
+
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !window.gsap || !window.ScrollTrigger) {
+      root.classList.add("static");
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    initSmooth();
+    const scene = $(".scene", root);
+    const floor = $(".floor-plane", root);
+    const ceil = $(".ceiling-plane", root);
+    const fg = $(".fg", root);
+    const header = $("#header");
+    let D = 1;
+    let centers = [];
+    const measure = () => {
+      D = Math.max(1, track.scrollWidth - innerWidth);
+      centers = stores.map((s) => Math.min(D, Math.max(0, s.offsetLeft + s.offsetWidth / 2 - innerWidth / 2)));
+    };
+    measure();
+
+    const setTrack = gsap.quickSetter(track, "x", "px");
+    const setFg = gsap.quickSetter(fg, "x", "px");
+    const setSceneY = gsap.quickSetter(scene, "y", "px");
+    const bob = { amp: 0 };
+    let stopBob;
+    let active = -2;
+
+    const apply = (x) => {
+      setTrack(-x);
+      setFg(-x * 1.6);
+      floor.style.backgroundPositionX = `${-x}px`;
+      ceil.style.backgroundPositionX = `${-x}px`;
+      // Schritt-Wippen: eine Welle pro ~260 px Weg
+      setSceneY(-Math.abs(Math.sin((x / 260) * Math.PI)) * 5 * bob.amp);
+      fg.style.opacity = bob.amp;
+      let best = -1;
+      let dist = Infinity;
+      centers.forEach((c, i) => {
+        const d = Math.abs(c - x);
+        if (d < dist) {
+          dist = d;
+          best = i;
+        }
+      });
+      if (dist > stores[0].offsetWidth * 0.55) best = -1;
+      if (best !== active) {
+        active = best;
+        stores.forEach((s, i) => s.classList.toggle("active", i === best));
+        $$("button", ticks).forEach((t, i) => t.classList.toggle("on", i === best));
+        if (best >= 0) {
+          hudN.textContent = `N°${String(best + 1).padStart(2, "0")} / ${BRANDS.length}`;
+          hudName.textContent = BRANDS[best].name;
+        } else {
+          hudN.textContent = x < D / 2 ? "Eingang" : "Ende";
+          hudName.textContent = SHOP.brand;
+        }
+      }
+    };
+
+    const snapPoints = () => [0, ...centers.map((c) => c / D), 1];
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: () => `top ${header.offsetHeight}px`,
+      end: () => `+=${D}`,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onRefresh: (self) => apply(self.progress * D),
+      snap: {
+        snapTo: (v) => snapPoints().reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a)),
+        duration: { min: 0.35, max: 0.9 },
+        delay: 0.1,
+        ease: "power2.inOut",
+      },
+      onUpdate: (self) => {
+        bob.amp = Math.min(1, bob.amp + 0.25);
+        clearTimeout(stopBob);
+        stopBob = setTimeout(() => gsap.to(bob, { amp: 0, duration: 0.4, onUpdate: () => apply(self.progress * D) }), 120);
+        apply(self.progress * D);
+      },
+    });
+    ScrollTrigger.addEventListener("refreshInit", measure);
+    apply(0);
+
+    const scrollFor = (i) => st.start + (i < 0 ? 0 : centers[i]);
+    const jump = (i, opts) => scrollToY(scrollFor(i), opts);
+
+    // Tür anklicken: erst hingehen, dann eintreten
+    let entering = false;
+    const enter = (a) => {
+      entering = true;
+      if (lenis) lenis.stop();
+      const b = brandOf(a.dataset.brand);
+      const door = $(".door", a).getBoundingClientRect();
+      const sr = scene.getBoundingClientRect();
+      const veil = $("#veil");
+      veil.style.background = b.interior;
+      gsap
+        .timeline({ onComplete: () => (location.href = a.href) })
+        .to($$(".leaf", a), { xPercent: (k) => (k ? 100 : -100), duration: 0.55, ease: "power2.inOut" })
+        .to(scene, { scale: 5, transformOrigin: `${door.left + door.width / 2 - sr.left}px ${door.top + door.height / 2 - sr.top}px`, duration: 1.1, ease: "power3.in" }, "-=0.2")
+        .to(veil, { opacity: 1, duration: 0.45, ease: "power1.in" }, "-=0.45");
+    };
+    track.addEventListener("click", (e) => {
+      const a = e.target.closest(".store");
+      if (!a || entering) return;
+      e.preventDefault();
+      const i = stores.indexOf(a);
+      const target = scrollFor(i);
+      const dist = Math.abs(window.scrollY - target);
+      if (dist < 6) return enter(a);
+      scrollToY(target, { duration: Math.min(1.6, 0.5 + dist / 1800), onComplete: () => setTimeout(() => enter(a), 120) });
+      if (!lenis) setTimeout(() => enter(a), 900);
+    });
+
+    // Direkt zu einem Laden gehen (Verzeichnis, Striche, Zurück aus dem Laden)
+    document.addEventListener("click", (e) => {
+      const j = e.target.closest("[data-jump]");
+      if (!j) return;
+      e.preventDefault();
+      closeOverlays();
+      jump(j.dataset.jump === "start" ? -1 : BRANDS.findIndex((b) => b.id === j.dataset.jump));
+    });
+
+    // Pfeiltasten: ein Laden weiter oder zurück
+    document.addEventListener("keydown", (e) => {
+      if (!["ArrowRight", "ArrowLeft"].includes(e.key) || e.target.closest("input, textarea, select")) return;
+      if (window.scrollY < st.start - 10 || window.scrollY > st.end + 10) return;
+      e.preventDefault();
+      const next = active < 0 ? (window.scrollY - st.start < D / 2 ? (e.key === "ArrowRight" ? 0 : -1) : BRANDS.length - 1) : active + (e.key === "ArrowRight" ? 1 : -1);
+      jump(Math.max(-1, Math.min(BRANDS.length - 1, next)));
+    });
+
+    // Zurück aus einem Laden: direkt davor stehen
+    const fromHash = BRANDS.findIndex((b) => `#${b.id}` === location.hash);
+    if (fromHash >= 0) {
+      ScrollTrigger.refresh();
+      jump(fromHash, { immediate: true });
+    }
+
+    // Zurück-Taste des Browsers: Szene wieder normal zeigen
+    window.addEventListener("pageshow", (e) => {
+      if (!e.persisted) return;
+      entering = false;
+      gsap.set(scene, { scale: 1 });
+      gsap.set($$(".leaf", track), { xPercent: 0 });
+      gsap.set("#veil", { opacity: 0 });
+      if (lenis) lenis.start();
+    });
+  }
+
+  /* ---------- Im Laden: Etagen ---------- */
+  function slab(from, to) {
+    return `
+      <div class="slab" aria-hidden="true">
+        <div class="slab-layers">
+          <div class="layer l-parkett"></div>
+          <div class="layer l-estrich"></div>
+          <div class="layer l-daemm"></div>
+          <div class="layer l-beton"></div>
+          <div class="layer l-decke"></div>
+        </div>
+        <div class="slab-labels mono">
+          <span>Parkett 22 mm</span><span>Estrich 60 mm</span><span>Trittschall 30 mm</span><span>Stahlbeton 250 mm</span><span>Abhangdecke</span>
+        </div>
+        <div class="slab-count"><span class="mono">Etage</span><div class="roll"><span>${from}</span><span>${to}</span></div></div>
+      </div>`;
+  }
+
+  function renderStore() {
+    const root = $("#store");
+    const b = brandOf(params.get("marke"));
+    if (!b) {
+      root.innerHTML = `<div class="wrap empty"><h2>Laden nicht gefunden</h2><p>Diesen Laden gibt es in der Passage nicht.</p><a class="btn ghost" href="index.html">Zur Passage</a></div>`;
+      return;
+    }
+    document.title = `${b.name} — ${SHOP.brand}`;
+    const vars = { "--int": b.interior, "--ink-s": b.ink, "--sb": b.signBg, "--sf": b.signFg, "--trim": b.trim, "--wall": b.wall };
+    Object.entries(vars).forEach(([k, v]) => document.body.style.setProperty(k, v));
+    document.body.classList.add("in-store");
+    document.body.dataset.font = b.font;
+    const own = PRODUCTS.filter((p) => p.brand === b.id);
+    const idx = BRANDS.indexOf(b);
+    const prev = BRANDS[idx - 1];
+    const next = BRANDS[idx + 1];
+
+    let html = `
+      <section class="foyer">
+        <a class="back-passage caps" href="index.html#${b.id}">← Zurück in die Passage</a>
+        <div class="store-sign"><span class="sign-n">N°${String(idx + 1).padStart(2, "0")}</span><span class="sign-b">${esc(b.name)}</span></div>
+        <p class="lead">Willkommen. Drei Etagen, ${own.length} Teile.</p>
+        <nav class="lift-panel" aria-label="Etagen">
+          ${DEPARTMENTS.map((d) => {
+            const n = own.filter((p) => p.gender === d.id).length;
+            return `<button data-floor="${d.id}"><span class="fl">${d.floor}</span><span class="fl-name">${d.name}</span><span class="mono">${n} Teile</span></button>`;
+          }).join("")}
+        </nav>
+        <span class="scroll-hint corner-hint">Nach unten: Etagen</span>
+      </section>`;
+
+    DEPARTMENTS.forEach((d, i) => {
+      if (i > 0) html += slab(DEPARTMENTS[i - 1].floor, d.floor);
+      const items = own.filter((p) => p.gender === d.id);
+      const cats = CATEGORIES.filter((c) => items.some((p) => p.category === c.id));
+      html += `
+        <section class="level" id="etage-${d.id}" data-floor="${d.floor}">
+          <div class="wrap">
+            <header class="level-head">
+              <span class="fl-big">${d.floor}</span>
+              <div><span class="eyebrow">${d.floorName}</span><h2>${d.name}</h2></div>
+              <a class="link caps" href="shop.html?marke=${b.id}&abteilung=${d.id}">Alle ${d.name} · ${items.length}</a>
+            </header>
+            <div class="shelves">
+              ${cats
+                .map((c) => {
+                  const inCat = items.filter((p) => p.category === c.id);
+                  const p = inCat[0];
+                  return `<a class="shelf reveal" href="shop.html?marke=${b.id}&abteilung=${d.id}&kategorie=${c.id}">
+                    <div class="shelf-img">${garmentSVG(p.type, colorOf(p.colors[0]).hex, "front", { transparent: true })}<span class="rail"></span></div>
+                    <span class="shelf-name">${c.name}</span><span class="mono">${inCat.length} ${inCat.length === 1 ? "Teil" : "Teile"}</span></a>`;
+                })
+                .join("")}
+            </div>
+          </div>
+        </section>`;
+    });
+
+    html += `
+      <section class="store-exit wrap">
+        <p class="mono">Nachbarläden</p>
+        <div class="neighbours">
+          ${prev ? `<a href="${storeUrl(prev.id)}" style="--sb:${prev.signBg};--sf:${prev.signFg}"><span class="caps">← Links</span><span class="nb-sign">${esc(prev.name)}</span></a>` : "<span></span>"}
+          <a class="btn ghost" href="index.html#${b.id}">Zurück in die Passage</a>
+          ${next ? `<a href="${storeUrl(next.id)}" style="--sb:${next.signBg};--sf:${next.signFg}"><span class="caps">Rechts →</span><span class="nb-sign">${esc(next.name)}</span></a>` : "<span></span>"}
+        </div>
+      </section>
+      <div class="lift" aria-hidden="true"><span class="lift-arrow">▲</span><span class="lift-n" id="lift-n">EG</span></div>`;
+    root.innerHTML = html;
+
+    initSmooth();
+    const levelTop = (id) => $(`#etage-${id}`).getBoundingClientRect().top + window.scrollY - $("#header").offsetHeight;
+    root.addEventListener("click", (e) => {
+      const f = e.target.closest("[data-floor]");
+      if (f && f.tagName === "BUTTON") scrollToY(levelTop(f.dataset.floor), { duration: 1.6 });
+    });
+
+    const liftN = $("#lift-n");
+    const liftArrow = $(".lift-arrow");
+    const setFloor = (fl, dir) => {
+      liftN.textContent = fl;
+      liftArrow.textContent = dir < 0 ? "▼" : "▲";
+    };
+    if (!window.gsap || !window.ScrollTrigger || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      $$(".level").forEach((l) => new IntersectionObserver((en) => en[0].isIntersecting && setFloor(l.dataset.floor, 1), { rootMargin: "-50% 0px" }).observe(l));
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    $$(".level").forEach((l) =>
+      ScrollTrigger.create({ trigger: l, start: "top 55%", end: "bottom 55%", onToggle: (self) => self.isActive && setFloor(l.dataset.floor, self.direction) })
+    );
+    // Querschnitt des Bodens: Schichten verschieben sich, die Etagenzahl rollt
+    $$(".slab").forEach((s) => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: s, start: "top bottom", end: "bottom top", scrub: 0.6 } });
+      $$(".layer", s).forEach((layer, k) => tl.fromTo(layer, { xPercent: k % 2 ? -6 : 6 }, { xPercent: k % 2 ? 6 : -6, ease: "none" }, 0));
+      tl.fromTo($(".slab-labels", s), { xPercent: 4 }, { xPercent: -4, ease: "none" }, 0);
+      tl.fromTo($(".roll", s), { yPercent: 0 }, { yPercent: -50, ease: "power2.inOut", duration: 0.3 }, 0.35);
+    });
   }
 
   /* ---------- Shop ---------- */
@@ -518,6 +884,8 @@
   ];
   const shopState = {
     kategorie: params.get("kategorie") || "",
+    abteilung: params.get("abteilung") || "",
+    marke: params.get("marke") || "",
     neu: params.get("neu") === "1",
     q: params.get("q") || "",
     farbe: (params.get("farbe") || "").split(",").filter(Boolean),
@@ -530,6 +898,8 @@
     const s = shopState;
     let list = s.q ? searchProducts(s.q) : PRODUCTS.slice();
     if (s.kategorie) list = list.filter((p) => p.category === s.kategorie);
+    if (s.abteilung) list = list.filter((p) => p.gender === s.abteilung);
+    if (s.marke) list = list.filter((p) => p.brand === s.marke);
     if (s.neu) list = list.filter((p) => p.isNew);
     if (s.farbe.length) list = list.filter((p) => p.colors.some((c) => s.farbe.includes(c)));
     if (s.groesse.length) list = list.filter((p) => p.sizes.some((z) => s.groesse.includes(z) && !p.soldOut.includes(z)));
@@ -544,6 +914,8 @@
   function syncShopUrl() {
     const s = shopState;
     const p = new URLSearchParams();
+    if (s.marke) p.set("marke", s.marke);
+    if (s.abteilung) p.set("abteilung", s.abteilung);
     if (s.kategorie) p.set("kategorie", s.kategorie);
     if (s.neu) p.set("neu", "1");
     if (s.q) p.set("q", s.q);
@@ -557,23 +929,33 @@
 
   function renderShop() {
     const s = shopState;
-    const title = s.q ? `Suche: „${s.q}“` : s.neu ? "Neuheiten" : s.kategorie ? catName(s.kategorie) : "Kollektion";
+    const parts = [s.marke && brandName(s.marke), s.abteilung && deptName(s.abteilung), s.kategorie && catName(s.kategorie), s.neu && "Neuheiten"].filter(Boolean);
+    const title = s.q ? `Suche: „${s.q}“` : parts.length ? parts.join(" · ") : "Alle Artikel";
     document.title = `${title} — ${SHOP.brand}`;
     $("#shop-title").textContent = title;
-    $("#shop-crumbs").innerHTML = `<a href="index.html">Start</a><span>/</span><a href="shop.html">Kollektion</a>${s.kategorie ? `<span>/</span><span>${catName(s.kategorie)}</span>` : ""}`;
+    $("#shop-crumbs").innerHTML =
+      `<a href="index.html">Passage</a>` +
+      (s.marke ? `<span>/</span><a href="${storeUrl(s.marke)}">${esc(brandName(s.marke))}</a>` : "") +
+      (s.abteilung ? `<span>/</span><span>${deptName(s.abteilung)}</span>` : "");
+    const store = brandOf(s.marke);
+    $("#shop-store").innerHTML = store
+      ? `<a class="store-back" href="${storeUrl(store.id)}" style="--sb:${store.signBg};--sf:${store.signFg}"><span class="bl-sw"></span>Zurück in den Laden</a>`
+      : "";
 
     const chip = (label, active, data) => `<button class="chip${active ? " active" : ""}" ${data}>${label}</button>`;
     $("#chips").innerHTML =
-      chip("Alle", !s.kategorie && !s.neu, 'data-chip=""') +
-      chip("Neuheiten", s.neu, 'data-chip="neu"') +
-      CATEGORIES.map((c) => chip(c.name, s.kategorie === c.id, `data-chip="${c.id}"`)).join("");
+      chip("Alle", !s.abteilung && !s.neu, 'data-chip=""') +
+      DEPARTMENTS.map((d) => chip(d.name, s.abteilung === d.id, `data-chip="${d.id}"`)).join("") +
+      chip("Neuheiten", s.neu, 'data-chip="neu"');
 
     const usedColors = [...new Set(PRODUCTS.flatMap((p) => p.colors))];
     const opt = (group, val, label, on, extra = "") => `<button class="opt" data-filter="${group}" data-val="${val}" aria-pressed="${on}">${extra}${label}</button>`;
+    $("#filter-cats").innerHTML = CATEGORIES.map((c) => opt("kategorie", c.id, c.name, s.kategorie === c.id)).join("");
+    $("#filter-brands").innerHTML = BRANDS.map((b) => opt("marke", b.id, esc(b.name), s.marke === b.id, `<span class="dot" style="background:${b.signBg}"></span>`)).join("");
     $("#filter-colors").innerHTML = usedColors.map((c) => opt("farbe", c, colorOf(c).name, s.farbe.includes(c), `<span class="dot" style="background:${colorOf(c).hex}"></span>`)).join("");
     $("#filter-sizes").innerHTML = SIZES.map((z) => opt("groesse", z, z, s.groesse.includes(z))).join("");
     $("#filter-prices").innerHTML = PRICE_RANGES.map(([id, label]) => opt("preis", id, label, s.preis === id)).join("");
-    const nActive = s.farbe.length + s.groesse.length + (s.preis ? 1 : 0);
+    const nActive = s.farbe.length + s.groesse.length + (s.preis ? 1 : 0) + (s.kategorie ? 1 : 0) + (s.marke ? 1 : 0);
     $("#filter-toggle").textContent = `Filter${nActive ? ` (${nActive})` : ""}`;
     $("#sort").value = s.sort;
 
@@ -592,7 +974,7 @@
       if (!b) return;
       const v = b.dataset.chip;
       shopState.neu = v === "neu";
-      shopState.kategorie = v && v !== "neu" ? v : "";
+      shopState.abteilung = v && v !== "neu" ? v : "";
       shopState.q = "";
       renderShop();
     });
@@ -600,7 +982,7 @@
       const b = e.target.closest("[data-filter]");
       if (b) {
         const { filter, val } = b.dataset;
-        if (filter === "preis") shopState.preis = shopState.preis === val ? "" : val;
+        if (filter === "preis" || filter === "kategorie" || filter === "marke") shopState[filter] = shopState[filter] === val ? "" : val;
         else {
           const arr = shopState[filter];
           shopState[filter] = arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val];
@@ -611,7 +993,7 @@
     });
     $("#shop-grid").addEventListener("click", (e) => {
       if (e.target.closest("#reset-all")) {
-        shopState.kategorie = "";
+        shopState.abteilung = "";
         shopState.neu = false;
         shopState.q = "";
         resetFilters();
@@ -630,6 +1012,8 @@
     shopState.farbe = [];
     shopState.groesse = [];
     shopState.preis = "";
+    shopState.kategorie = "";
+    shopState.marke = "";
     renderShop();
   }
 
@@ -660,7 +1044,8 @@
       <div class="pdp">
         <div class="gallery" id="gallery">${gallery()}</div>
         <div class="buybox">
-          <nav class="crumbs" aria-label="Brotkrumen"><a href="index.html">Start</a><span>/</span><a href="shop.html?kategorie=${p.category}">${catName(p.category)}</a></nav>
+          <nav class="crumbs" aria-label="Brotkrumen"><a href="index.html">Passage</a><span>/</span><a href="${storeUrl(p.brand)}">${esc(brandName(p.brand))}</a><span>/</span><a href="shop.html?marke=${p.brand}&abteilung=${p.gender}">${deptName(p.gender)}</a><span>/</span><a href="shop.html?marke=${p.brand}&abteilung=${p.gender}&kategorie=${p.category}">${catName(p.category)}</a></nav>
+          <a class="pdp-brand" href="${storeUrl(p.brand)}">${esc(brandName(p.brand))}</a>
           ${p.isNew ? `<span class="eyebrow">Neu</span>` : ""}
           <h1>${esc(p.name)}</h1>
           <div class="price">${euro(p.price)} <span class="mono" style="margin-left:6px">inkl. MwSt.</span></div>
@@ -705,7 +1090,7 @@
         </div>
       </div>
       <section class="section wrap">
-        <div class="section-head"><h2>Das könnte Ihnen auch gefallen</h2></div>
+        <div class="section-head"><h2>Mehr von ${esc(brandName(p.brand))}</h2><a class="link caps" href="${storeUrl(p.brand)}">Laden betreten</a></div>
         <div class="grid">${related(p).map((r) => productCard(r)).join("")}</div>
       </section>`;
 
@@ -748,8 +1133,8 @@
   }
 
   function related(p) {
-    const same = PRODUCTS.filter((x) => x.id !== p.id && x.category === p.category);
-    const other = PRODUCTS.filter((x) => x.id !== p.id && x.category !== p.category);
+    const same = PRODUCTS.filter((x) => x.id !== p.id && x.brand === p.brand && x.gender === p.gender);
+    const other = PRODUCTS.filter((x) => x.id !== p.id && x.brand !== p.brand && x.category === p.category);
     return [...same, ...other].slice(0, 4);
   }
 
@@ -826,7 +1211,7 @@
           .map((i) => {
             const p = byId(i.id);
             return `<div class="mini-item"><div class="thumb">${garmentSVG(p.type, colorOf(i.color).hex)}<b>${i.qty}</b></div>
-              <div>${esc(p.name)}<br><span style="color:var(--muted)">${colorOf(i.color).name} · ${esc(i.size)}</span></div><span>${euro(p.price * i.qty)}</span></div>`;
+              <div>${esc(brandName(p.brand))}<br>${esc(p.name)}<br><span style="color:var(--muted)">${colorOf(i.color).name} · ${esc(i.size)}</span></div><span>${euro(p.price * i.qty)}</span></div>`;
           })
           .join("")}
       </div>
@@ -1011,6 +1396,7 @@
     renderShop();
     bindShop();
   }
+  if (page === "laden") renderStore();
   if (page === "produkt") renderProduct();
   if (page === "warenkorb") renderCartPage();
   if (page === "kasse") renderCheckout();

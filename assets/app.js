@@ -124,7 +124,7 @@
   /* ---------- Layout ---------- */
   function navLinks() {
     return [
-      ["index.html", "Passage", page === "home"],
+      ["index.html", "Aufzug", page === "home"],
       ...DEPARTMENTS.map((d) => [`shop.html?abteilung=${d.id}`, d.name, page === "shop" && params.get("abteilung") === d.id]),
     ];
   }
@@ -160,7 +160,7 @@
           <div class="cols">
             <div class="newsletter" style="text-align:left">
               <a class="logo" href="index.html">${esc(SHOP.brand)}</a>
-              <p>Neue Marken, neue Kollektionen und Einladungen aus der Passage. Höchstens einmal im Monat.</p>
+              <p>Neue Marken, neue Kollektionen und Einladungen aus dem Haus. Höchstens einmal im Monat.</p>
               <form data-form="newsletter" novalidate>
                 <label class="sr-only" for="nl-foot">E-Mail-Adresse</label>
                 <input id="nl-foot" type="email" placeholder="E-Mail-Adresse" autocomplete="email">
@@ -175,7 +175,7 @@
               <li><a href="service.html#groessen">Größentabelle</a></li>
               <li><a href="service.html#faq">Häufige Fragen</a></li></ul></div>
             <div><h4 class="caps">Entdecken</h4><ul>
-              <li><a href="index.html">Passage</a></li>
+              <li><a href="index.html">Aufzug</a></li>
               ${DEPARTMENTS.map((d) => `<li><a href="shop.html?abteilung=${d.id}">${d.name}</a></li>`).join("")}
               <li><a href="shop.html?neu=1">Neuheiten</a></li>
               <li><a href="ueber-uns.html">Über uns</a></li></ul></div>
@@ -215,7 +215,7 @@
       <div class="mobile-menu" id="mobile-menu" aria-hidden="true" data-lenis-prevent>
         <div class="top"><span class="logo">${esc(SHOP.brand)}</span><button data-action="close" aria-label="Menü schließen">${ICON.close}</button></div>
         <nav aria-label="Mobile Navigation">
-          <a href="index.html">Passage</a>
+          <a href="index.html">Aufzug</a>
           ${DEPARTMENTS.map((d) => `<a href="shop.html?abteilung=${d.id}">${d.name}</a>`).join("")}
           <a href="#marken" data-action="brands">Marken</a>
           <a href="shop.html?neu=1">Neuheiten</a>
@@ -287,8 +287,8 @@
     return `
       <article class="card reveal">
         <a class="media" href="${productUrl(p)}" aria-label="${esc(p.name)}">
-          <span class="main">${garmentSVG(p.type, hex, "front")}</span>
-          <span class="alt">${garmentSVG(p.type, hex, "detail")}</span>
+          <span class="main">${garmentImg(p.type, hex, "front")}</span>
+          <span class="alt">${garmentImg(p.type, hex, "detail")}</span>
           ${p.isNew ? `<span class="badge">Neu</span>` : ""}
         </a>
         <button class="wish" data-action="wish" data-id="${p.id}" aria-pressed="${wished}" aria-label="${esc(p.name)} auf die Merkliste">${ICON.heart}</button>
@@ -304,7 +304,7 @@
   function brandsList() {
     return `
       <h3>Alle Marken</h3>
-      <p class="mono" style="margin:8px 0 20px">${BRANDS.length} Läden in der Passage</p>
+      <p class="mono" style="margin:8px 0 20px">${BRANDS.length} Etagen, ${BRANDS.length} Marken</p>
       <div class="brand-list">
         ${BRANDS.map(
           (b, i) => `<a href="${storeUrl(b.id)}" style="--sb:${b.signBg};--sf:${b.signFg}">
@@ -337,7 +337,7 @@
     const key = keyOf(i);
     return `
       <div class="line-item">
-        <a class="thumb" href="${productUrl(p, i.color)}">${garmentSVG(p.type, colorOf(i.color).hex)}</a>
+        <a class="thumb" href="${productUrl(p, i.color)}">${garmentImg(p.type, colorOf(i.color).hex)}</a>
         <div class="meta">
           <div style="display:flex;justify-content:space-between;gap:12px"><a href="${productUrl(p, i.color)}">${esc(p.name)}</a><span>${euro(p.price * i.qty)}</span></div>
           <span class="sub">${esc(brandName(p.brand))} · ${colorOf(i.color).name} · ${esc(i.size)}</span>
@@ -547,7 +547,7 @@
     else window.scrollTo({ top: y, behavior: opts.immediate ? "auto" : "smooth" });
   }
 
-  /* ---------- Die Passage (Startseite) ---------- */
+  /* ---------- Der gläserne Aufzug (Startseite) ---------- */
   function storeFacade(b, i) {
     const n = String(i + 1).padStart(2, "0");
     const own = PRODUCTS.filter((p) => p.brand === b.id);
@@ -556,7 +556,7 @@
       <div class="win">
         <div class="win-in">
           <span class="spot"></span>
-          ${garmentSVG(p.type, colorOf(p.colors[0]).hex, "front", { transparent: true })}
+          ${garmentImg(p.type, colorOf(p.colors[0]).hex, "front", { transparent: true })}
           <span class="plinth"></span>
         </div>
         <span class="glass"></span>
@@ -577,181 +577,237 @@
   }
 
   function directory() {
-    return `<ol class="directory-board">${BRANDS.map((b, i) => `<li><a href="${storeUrl(b.id)}" data-jump="${b.id}"><span class="mono">${String(i + 1).padStart(2, "0")}</span>${esc(b.name)}</a></li>`).join("")}</ol>`;
+    return `<ol class="directory-board">${BRANDS.map((b, i) => `<li><a href="${storeUrl(b.id)}" data-go="${i + 1}"><span class="mono">${String(i + 1).padStart(2, "0")}</span>${esc(b.name)}</a></li>`).join("")}</ol>`;
   }
 
   function renderPassage() {
-    const root = $("#passage");
+    const root = $("#lift");
     if (!root) return;
-    const track = $("#track");
-    track.innerHTML =
-      `<div class="wall-panel entrance">
-         <p class="mono">Eingang · ${BRANDS.length} Läden</p>
-         <h1>${esc(SHOP.brand)}<br><em>Die Passage der Marken</em></h1>
-         <p class="wp-text">Schlendern Sie an den Läden vorbei. Jeder Scroll ist ein Schritt. Ein Klick auf eine Tür, und Sie sind drin.</p>
-         <span class="walk-hint caps">Scrollen, um zu gehen</span>
-       </div><span class="pillar"></span>` +
-      BRANDS.map((b, i) => storeFacade(b, i) + `<span class="pillar"></span>`).join("") +
-      `<div class="wall-panel exit">
-         <p class="mono">Ende der Passage</p>
-         <h2>Alle Läden<br>auf einen Blick</h2>
-         ${directory()}
-         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn" href="shop.html">Alle Artikel</a><button class="btn ghost" data-jump="start">Zurück zum Eingang</button></div>
-       </div>`;
+    const floorsEl = $("#floors");
+    const N = BRANDS.length;
 
-    const stores = $$(".store", track);
-    const hudName = $("#hud-name");
-    const hudN = $("#hud-n");
-    const ticks = $("#hud-ticks");
-    ticks.innerHTML = BRANDS.map((b) => `<button data-jump="${b.id}" aria-label="Zu ${esc(b.name)} gehen"></button>`).join("");
+    // Etage 0 = Eingang, Etage 1–10 = Läden. Dazwischen die schwarze Schicht.
+    floorsEl.innerHTML =
+      `<section class="lvl lobby" data-floor="0">
+         <div class="ceil"></div>
+         <div class="stage">
+           <div>
+             <p class="mono">Eingang · ${N} Etagen · ${N} Marken</p>
+             <h1>${esc(SHOP.brand)}<em>${esc(SHOP.claim)}</em></h1>
+             <p class="wp-text">Steigen Sie ein. Scrollen fährt den gläsernen Aufzug, jede Etage ist ein Laden. Das Tastenfeld rechts bringt Sie direkt ans Ziel.</p>
+             <span class="walk-hint caps">Nach unten scrollen</span>
+           </div>
+           ${directory()}
+         </div>
+         <div class="ground"></div>
+       </section>` +
+      BRANDS.map(
+        (b, i) => `
+        <div class="gap" aria-hidden="true"><span>Etage ${String(i + 1).padStart(2, "0")}</span></div>
+        <section class="lvl" data-floor="${i + 1}">
+          <div class="ceil"></div>
+          <div class="floor-label"><span class="fl-no">${String(i + 1).padStart(2, "0")}</span><strong>${esc(b.name)}</strong><span class="mono">Damen · Herren · Unisex</span></div>
+          <div class="stage">${storeFacade(b, i)}</div>
+          <div class="ground"></div>
+        </section>`
+      ).join("");
+
+    $("#cab-panel").innerHTML =
+      `<span class="ph-title">Etage</span><button class="lobby-btn on" data-go="0" aria-label="Eingang">E</button>` +
+      BRANDS.map((b, i) => `<button data-go="${i + 1}" data-name="${esc(b.name)}" aria-label="Etage ${i + 1}: ${esc(b.name)}">${i + 1}</button>`).join("");
 
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce || !window.gsap || !window.ScrollTrigger) {
       root.classList.add("static");
+      $$(".lvl", floorsEl).forEach((l) => l.classList.add("locked"));
       return;
     }
 
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
     initSmooth();
-    const scene = $(".scene", root);
-    const floor = $(".floor-plane", root);
-    const ceil = $(".ceiling-plane", root);
-    const fg = $(".fg", root);
+
     const header = $("#header");
-    let D = 1;
-    let centers = [];
+    const levels = $$(".lvl", floorsEl);
+    const stores = levels.map((l) => $(".store", l));
+    const cabDoors = $$(".cab-door", root);
+    const dNum = $("#d-num");
+    const dName = $("#d-name");
+    const dArrow = $("#d-arrow");
+    const buttons = $$("#cab-panel button");
+    let H = 0; // Höhe einer Etage
+    let G = 0; // Höhe der schwarzen Schicht
+    let pitch = 1;
+    let total = 1;
+
     const measure = () => {
-      D = Math.max(1, track.scrollWidth - innerWidth);
-      centers = stores.map((s) => Math.min(D, Math.max(0, s.offsetLeft + s.offsetWidth / 2 - innerWidth / 2)));
+      H = root.clientHeight;
+      G = Math.round(H * 0.3);
+      pitch = H + G;
+      total = N * pitch;
+      root.style.setProperty("--fh", `${H}px`);
+      root.style.setProperty("--gh", `${G}px`);
     };
     measure();
 
-    const setTrack = gsap.quickSetter(track, "x", "px");
-    const setFg = gsap.quickSetter(fg, "x", "px");
-    const setSceneY = gsap.quickSetter(scene, "y", "px");
-    const bob = { amp: 0 };
-    let stopBob;
-    let active = -2;
+    const setY = gsap.quickSetter(floorsEl, "y", "px");
+    let floor = -1; // Etage, an der der Aufzug gerade steht (oder zuletzt stand)
+    let shown = -1;
+    let lastY = 0;
+    let doorsOpen = false;
+    let travelling = false;
+    let busy = false;
 
-    const apply = (x) => {
-      setTrack(-x);
-      setFg(-x * 1.6);
-      floor.style.backgroundPositionX = `${-x}px`;
-      ceil.style.backgroundPositionX = `${-x}px`;
-      // Schritt-Wippen: eine Welle pro ~260 px Weg
-      setSceneY(-Math.abs(Math.sin((x / 260) * Math.PI)) * 5 * bob.amp);
-      fg.style.opacity = bob.amp;
-      let best = -1;
-      let dist = Infinity;
-      centers.forEach((c, i) => {
-        const d = Math.abs(c - x);
-        if (d < dist) {
-          dist = d;
-          best = i;
-        }
-      });
-      if (dist > stores[0].offsetWidth * 0.55) best = -1;
-      if (best !== active) {
-        active = best;
-        stores.forEach((s, i) => s.classList.toggle("active", i === best));
-        $$("button", ticks).forEach((t, i) => t.classList.toggle("on", i === best));
-        if (best >= 0) {
-          hudN.textContent = `N°${String(best + 1).padStart(2, "0")} / ${BRANDS.length}`;
-          hudName.textContent = BRANDS[best].name;
-        } else {
-          hudN.textContent = x < D / 2 ? "Eingang" : "Ende";
-          hudName.textContent = SHOP.brand;
-        }
-      }
+    const doorTl = gsap.timeline({ paused: true });
+    doorTl.to(cabDoors[0], { xPercent: -100, duration: 0.7, ease: "power2.inOut" }, 0).to(cabDoors[1], { xPercent: 100, duration: 0.7, ease: "power2.inOut" }, 0);
+
+    const storeDoors = (i, open) => {
+      const s = stores[i];
+      if (!s) return;
+      gsap.to($$(".leaf", s), { xPercent: (k) => (open ? (k ? 100 : -100) : 0), duration: open ? 0.7 : 0.35, ease: "power2.inOut", overwrite: true });
     };
 
-    const snapPoints = () => [0, ...centers.map((c) => c / D), 1];
+    const display = (k, dir) => {
+      if (k === shown && dArrow.dataset.dir === String(dir)) return;
+      shown = k;
+      dArrow.dataset.dir = dir;
+      dArrow.textContent = dir > 0 ? "▼" : dir < 0 ? "▲" : "•";
+      dNum.textContent = k === 0 ? "E" : String(k).padStart(2, "0");
+      dName.textContent = k === 0 ? SHOP.brand : BRANDS[k - 1].name;
+      buttons.forEach((b) => b.classList.toggle("on", Number(b.dataset.go) === k));
+    };
+
+    const open = (k) => {
+      if (doorsOpen && floor === k) return;
+      floor = k;
+      doorsOpen = true;
+      levels[k].classList.add("locked");
+      if (stores[k]) stores[k].classList.add("active");
+      doorTl.timeScale(1).play();
+      storeDoors(k - 0, true);
+    };
+    const close = () => {
+      if (!doorsOpen) return;
+      doorsOpen = false;
+      levels[floor].classList.remove("locked");
+      if (stores[floor]) stores[floor].classList.remove("active");
+      doorTl.timeScale(2).reverse();
+      storeDoors(floor, false);
+    };
+
+    const nearest = (y) => Math.max(0, Math.min(N, Math.round(y / pitch)));
+    const idle = gsap.delayedCall(0.2, () => {
+      const k = nearest(lastY);
+      if (Math.abs(lastY - k * pitch) < 3 && !travelling) open(k);
+    }).pause();
+
     const st = ScrollTrigger.create({
       trigger: root,
       start: () => `top ${header.offsetHeight}px`,
-      end: () => `+=${D}`,
+      end: () => `+=${total}`,
       pin: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onRefresh: (self) => apply(self.progress * D),
+      onRefresh: (self) => {
+        lastY = self.progress * total;
+        setY(-lastY);
+      },
       snap: {
-        snapTo: (v) => snapPoints().reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a)),
-        duration: { min: 0.35, max: 0.9 },
-        delay: 0.1,
+        snapTo: (v) => Math.round(v * N) / N,
+        duration: { min: 0.3, max: 0.8 },
+        delay: 0.12,
         ease: "power2.inOut",
       },
       onUpdate: (self) => {
-        bob.amp = Math.min(1, bob.amp + 0.25);
-        clearTimeout(stopBob);
-        stopBob = setTimeout(() => gsap.to(bob, { amp: 0, duration: 0.4, onUpdate: () => apply(self.progress * D) }), 120);
-        apply(self.progress * D);
+        const y = self.progress * total;
+        const dir = y > lastY ? 1 : y < lastY ? -1 : 0;
+        lastY = y;
+        setY(-y);
+        const k = nearest(y);
+        const off = Math.abs(y - k * pitch);
+        if (off > 3) close();
+        display(k, off > 3 ? dir : 0);
+        idle.restart(true);
       },
     });
     ScrollTrigger.addEventListener("refreshInit", measure);
-    apply(0);
+    if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
+    display(0, 0);
+    idle.restart(true);
 
-    const scrollFor = (i) => st.start + (i < 0 ? 0 : centers[i]);
-    const jump = (i, opts) => scrollToY(scrollFor(i), opts);
+    const yFor = (k) => st.start + k * pitch;
+    const ride = (k, then) => {
+      const from = nearest(lastY);
+      travelling = true;
+      close();
+      scrollToY(yFor(k), {
+        duration: Math.min(2.4, 0.7 + Math.abs(k - from) * 0.22),
+        easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+        onComplete: () => {
+          travelling = false;
+          open(k);
+          if (then) gsap.delayedCall(0.75, then);
+        },
+      });
+      if (!lenis)
+        setTimeout(() => {
+          travelling = false;
+          open(k);
+          if (then) setTimeout(then, 750);
+        }, 1200);
+    };
 
-    // Tür anklicken: erst hingehen, dann eintreten
-    let entering = false;
+    // Laden betreten: Kamera bleibt stehen, Türen offen, Überblendung in den Laden
     const enter = (a) => {
-      entering = true;
+      if (busy) return;
+      busy = true;
       if (lenis) lenis.stop();
       const b = brandOf(a.dataset.brand);
-      const door = $(".door", a).getBoundingClientRect();
-      const sr = scene.getBoundingClientRect();
       const veil = $("#veil");
       veil.style.background = b.interior;
-      gsap
-        .timeline({ onComplete: () => (location.href = a.href) })
-        .to($$(".leaf", a), { xPercent: (k) => (k ? 100 : -100), duration: 0.55, ease: "power2.inOut" })
-        .to(scene, { scale: 5, transformOrigin: `${door.left + door.width / 2 - sr.left}px ${door.top + door.height / 2 - sr.top}px`, duration: 1.1, ease: "power3.in" }, "-=0.2")
-        .to(veil, { opacity: 1, duration: 0.45, ease: "power1.in" }, "-=0.45");
+      gsap.to(veil, { opacity: 1, duration: 0.55, ease: "power1.in", onComplete: () => (location.href = a.href) });
     };
-    track.addEventListener("click", (e) => {
+
+    floorsEl.addEventListener("click", (e) => {
+      const go = e.target.closest("[data-go]");
+      if (go) {
+        e.preventDefault();
+        return ride(Number(go.dataset.go));
+      }
       const a = e.target.closest(".store");
-      if (!a || entering) return;
+      if (!a || busy) return;
       e.preventDefault();
-      const i = stores.indexOf(a);
-      const target = scrollFor(i);
-      const dist = Math.abs(window.scrollY - target);
-      if (dist < 6) return enter(a);
-      scrollToY(target, { duration: Math.min(1.6, 0.5 + dist / 1800), onComplete: () => setTimeout(() => enter(a), 120) });
-      if (!lenis) setTimeout(() => enter(a), 900);
+      const k = stores.indexOf(a);
+      if (doorsOpen && floor === k && Math.abs(window.scrollY - yFor(k)) < 4) enter(a);
+      else ride(k, () => enter(a));
     });
-
-    // Direkt zu einem Laden gehen (Verzeichnis, Striche, Zurück aus dem Laden)
+    $("#cab-panel").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-go]");
+      if (b) ride(Number(b.dataset.go));
+    });
     document.addEventListener("click", (e) => {
-      const j = e.target.closest("[data-jump]");
-      if (!j) return;
-      e.preventDefault();
-      closeOverlays();
-      jump(j.dataset.jump === "start" ? -1 : BRANDS.findIndex((b) => b.id === j.dataset.jump));
+      const g = e.target.closest(".modal [data-go], .brand-list a");
+      if (!g || !$("#lift")) return;
+      const id = (g.getAttribute("href") || "").split("marke=")[1];
+      const k = BRANDS.findIndex((b) => b.id === id) + 1;
+      if (k > 0) {
+        e.preventDefault();
+        closeOverlays();
+        ride(k);
+      }
     });
 
-    // Pfeiltasten: ein Laden weiter oder zurück
-    document.addEventListener("keydown", (e) => {
-      if (!["ArrowRight", "ArrowLeft"].includes(e.key) || e.target.closest("input, textarea, select")) return;
-      if (window.scrollY < st.start - 10 || window.scrollY > st.end + 10) return;
-      e.preventDefault();
-      const next = active < 0 ? (window.scrollY - st.start < D / 2 ? (e.key === "ArrowRight" ? 0 : -1) : BRANDS.length - 1) : active + (e.key === "ArrowRight" ? 1 : -1);
-      jump(Math.max(-1, Math.min(BRANDS.length - 1, next)));
-    });
-
-    // Zurück aus einem Laden: direkt davor stehen
-    const fromHash = BRANDS.findIndex((b) => `#${b.id}` === location.hash);
-    if (fromHash >= 0) {
+    // Zurück aus einem Laden: Aufzug steht auf dieser Etage
+    const fromHash = BRANDS.findIndex((b) => `#${b.id}` === location.hash) + 1;
+    if (fromHash > 0) {
       ScrollTrigger.refresh();
-      jump(fromHash, { immediate: true });
+      scrollToY(yFor(fromHash), { immediate: true });
+      gsap.delayedCall(0.3, () => open(fromHash));
     }
 
-    // Zurück-Taste des Browsers: Szene wieder normal zeigen
     window.addEventListener("pageshow", (e) => {
       if (!e.persisted) return;
-      entering = false;
-      gsap.set(scene, { scale: 1 });
-      gsap.set($$(".leaf", track), { xPercent: 0 });
+      busy = false;
       gsap.set("#veil", { opacity: 0 });
       if (lenis) lenis.start();
     });
@@ -779,7 +835,7 @@
     const root = $("#store");
     const b = brandOf(params.get("marke"));
     if (!b) {
-      root.innerHTML = `<div class="wrap empty"><h2>Laden nicht gefunden</h2><p>Diesen Laden gibt es in der Passage nicht.</p><a class="btn ghost" href="index.html">Zur Passage</a></div>`;
+      root.innerHTML = `<div class="wrap empty"><h2>Laden nicht gefunden</h2><p>Diesen Laden gibt es nicht.</p><a class="btn ghost" href="index.html">Zum Aufzug</a></div>`;
       return;
     }
     document.title = `${b.name} — ${SHOP.brand}`;
@@ -794,7 +850,7 @@
 
     let html = `
       <section class="foyer">
-        <a class="back-passage caps" href="index.html#${b.id}">← Zurück in die Passage</a>
+        <a class="back-passage caps" href="index.html#${b.id}">← Zurück zum Aufzug</a>
         <div class="store-sign"><span class="sign-n">N°${String(idx + 1).padStart(2, "0")}</span><span class="sign-b">${esc(b.name)}</span></div>
         <p class="lead">Willkommen. Drei Etagen, ${own.length} Teile.</p>
         <nav class="lift-panel" aria-label="Etagen">
@@ -824,7 +880,7 @@
                   const inCat = items.filter((p) => p.category === c.id);
                   const p = inCat[0];
                   return `<a class="shelf reveal" href="shop.html?marke=${b.id}&abteilung=${d.id}&kategorie=${c.id}">
-                    <div class="shelf-img">${garmentSVG(p.type, colorOf(p.colors[0]).hex, "front", { transparent: true })}<span class="rail"></span></div>
+                    <div class="shelf-img">${garmentImg(p.type, colorOf(p.colors[0]).hex, "front", { transparent: true })}<span class="rail"></span></div>
                     <span class="shelf-name">${c.name}</span><span class="mono">${inCat.length} ${inCat.length === 1 ? "Teil" : "Teile"}</span></a>`;
                 })
                 .join("")}
@@ -838,7 +894,7 @@
         <p class="mono">Nachbarläden</p>
         <div class="neighbours">
           ${prev ? `<a href="${storeUrl(prev.id)}" style="--sb:${prev.signBg};--sf:${prev.signFg}"><span class="caps">← Links</span><span class="nb-sign">${esc(prev.name)}</span></a>` : "<span></span>"}
-          <a class="btn ghost" href="index.html#${b.id}">Zurück in die Passage</a>
+          <a class="btn ghost" href="index.html#${b.id}">Zurück zum Aufzug</a>
           ${next ? `<a href="${storeUrl(next.id)}" style="--sb:${next.signBg};--sf:${next.signFg}"><span class="caps">Rechts →</span><span class="nb-sign">${esc(next.name)}</span></a>` : "<span></span>"}
         </div>
       </section>
@@ -893,6 +949,8 @@
     preis: params.get("preis") || "",
     sort: params.get("sort") || "empfohlen",
   };
+  const PAGE = 24;
+  let shopShown = PAGE;
 
   function shopFiltered() {
     const s = shopState;
@@ -927,14 +985,15 @@
     history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
   }
 
-  function renderShop() {
+  function renderShop(more = false) {
     const s = shopState;
+    shopShown = more ? shopShown + PAGE : PAGE;
     const parts = [s.marke && brandName(s.marke), s.abteilung && deptName(s.abteilung), s.kategorie && catName(s.kategorie), s.neu && "Neuheiten"].filter(Boolean);
     const title = s.q ? `Suche: „${s.q}“` : parts.length ? parts.join(" · ") : "Alle Artikel";
     document.title = `${title} — ${SHOP.brand}`;
     $("#shop-title").textContent = title;
     $("#shop-crumbs").innerHTML =
-      `<a href="index.html">Passage</a>` +
+      `<a href="index.html">Start</a>` +
       (s.marke ? `<span>/</span><a href="${storeUrl(s.marke)}">${esc(brandName(s.marke))}</a>` : "") +
       (s.abteilung ? `<span>/</span><span>${deptName(s.abteilung)}</span>` : "");
     const store = brandOf(s.marke);
@@ -962,7 +1021,10 @@
     const list = shopFiltered();
     $("#shop-count").textContent = `${list.length} ${list.length === 1 ? "Artikel" : "Artikel"}`;
     $("#shop-grid").innerHTML = list.length
-      ? list.map((p) => productCard(p)).join("")
+      ? list.slice(0, shopShown).map((p) => productCard(p)).join("") +
+        (list.length > shopShown
+          ? `<div class="more" style="grid-column:1/-1;text-align:center;padding-top:24px"><p class="mono" style="margin-bottom:14px">${shopShown} von ${list.length}</p><button class="btn ghost" id="show-more">Mehr anzeigen</button></div>`
+          : "")
       : `<div class="empty" style="grid-column:1/-1"><h3>Keine passenden Artikel</h3><p>Versuchen Sie es mit weniger Filtern.</p><button class="btn ghost" id="reset-all">Filter zurücksetzen</button></div>`;
     revealAll();
     syncShopUrl();
@@ -992,6 +1054,12 @@
       if (e.target.closest("#filter-reset")) resetFilters();
     });
     $("#shop-grid").addEventListener("click", (e) => {
+      if (e.target.closest("#show-more")) {
+        const y = window.scrollY;
+        renderShop(true);
+        window.scrollTo(0, y);
+        return;
+      }
       if (e.target.closest("#reset-all")) {
         shopState.abteilung = "";
         shopState.neu = false;
@@ -1036,7 +1104,7 @@
         ["detail", "Detail"],
         ["fabric", "Material"],
       ]
-        .map(([v, label], i) => `<button class="shot" data-view="${v}" aria-label="${label} vergrößern">${garmentSVG(p.type, hex, v)}<span class="mono">${String(i + 1).padStart(2, "0")} / ${label}</span></button>`)
+        .map(([v, label], i) => `<button class="shot" data-view="${v}" aria-label="${label} vergrößern">${garmentSVG(p.type, hex, v, { rich: true })}<span class="mono">${String(i + 1).padStart(2, "0")} / ${label}</span></button>`)
         .join("");
     };
 
@@ -1044,7 +1112,7 @@
       <div class="pdp">
         <div class="gallery" id="gallery">${gallery()}</div>
         <div class="buybox">
-          <nav class="crumbs" aria-label="Brotkrumen"><a href="index.html">Passage</a><span>/</span><a href="${storeUrl(p.brand)}">${esc(brandName(p.brand))}</a><span>/</span><a href="shop.html?marke=${p.brand}&abteilung=${p.gender}">${deptName(p.gender)}</a><span>/</span><a href="shop.html?marke=${p.brand}&abteilung=${p.gender}&kategorie=${p.category}">${catName(p.category)}</a></nav>
+          <nav class="crumbs" aria-label="Brotkrumen"><a href="index.html">Start</a><span>/</span><a href="${storeUrl(p.brand)}">${esc(brandName(p.brand))}</a><span>/</span><a href="shop.html?marke=${p.brand}&abteilung=${p.gender}">${deptName(p.gender)}</a><span>/</span><a href="shop.html?marke=${p.brand}&abteilung=${p.gender}&kategorie=${p.category}">${catName(p.category)}</a></nav>
           <a class="pdp-brand" href="${storeUrl(p.brand)}">${esc(brandName(p.brand))}</a>
           ${p.isNew ? `<span class="eyebrow">Neu</span>` : ""}
           <h1>${esc(p.name)}</h1>
@@ -1113,7 +1181,7 @@
         $("#buy-msg").textContent = "";
       }
       const shot = e.target.closest(".shot");
-      if (shot) openModal(garmentSVG(p.type, colorOf(color).hex, shot.dataset.view), "zoom");
+      if (shot) openModal(garmentSVG(p.type, colorOf(color).hex, shot.dataset.view, { rich: true }), "zoom");
     });
 
     $("#add").addEventListener("click", () => {
@@ -1210,7 +1278,7 @@
         ${items
           .map((i) => {
             const p = byId(i.id);
-            return `<div class="mini-item"><div class="thumb">${garmentSVG(p.type, colorOf(i.color).hex)}<b>${i.qty}</b></div>
+            return `<div class="mini-item"><div class="thumb">${garmentImg(p.type, colorOf(i.color).hex)}<b>${i.qty}</b></div>
               <div>${esc(brandName(p.brand))}<br>${esc(p.name)}<br><span style="color:var(--muted)">${colorOf(i.color).name} · ${esc(i.size)}</span></div><span>${euro(p.price * i.qty)}</span></div>`;
           })
           .join("")}

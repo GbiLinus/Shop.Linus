@@ -6,7 +6,7 @@
 // Name der Passage (des Shops). Platzhalter, nur hier ändern.
 const SHOP = {
   brand: "ATELIER",
-  claim: "Die Passage der Marken",
+  claim: "Das Haus der Marken",
   freeShippingFrom: 250,
   shipping: {
     standard: { label: "Standardversand", time: "2–4 Werktage", price: 15 },

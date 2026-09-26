@@ -327,12 +327,15 @@ function garmentSVG(type, hex, view = "front", opts = {}) {
   }
 
   const vb = view === "detail" ? g.detail : "0 0 400 500";
+  // Rauschfilter (feTurbulence) sind teuer: nur in der großen Ansicht (opts.rich)
   const tex =
     texKind === "knit"
       ? `<path d="${parts.body}" fill="url(#tx${id})"/>`
-      : `<g clip-path="url(#cl${id})"><rect width="400" height="500" filter="url(#tx${id}f)" opacity=".5"/></g>`;
+      : opts.rich
+        ? `<g clip-path="url(#cl${id})"><rect width="400" height="500" filter="url(#tx${id}f)" opacity=".5"/></g>`
+        : "";
   return `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" preserveAspectRatio="${opts.transparent ? "xMidYMid meet" : "xMidYMid slice"}">
-    <defs>${textureDefs(id, texKind, hex)}
+    <defs>${texKind === "knit" || opts.rich ? textureDefs(id, texKind, hex) : ""}
       <clipPath id="cl${id}"><path d="${parts.body}"/></clipPath>
       <linearGradient id="sh${id}" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></linearGradient>
@@ -349,4 +352,22 @@ function garmentSVG(type, hex, view = "front", opts = {}) {
       <path d="${parts.body}" fill="url(#sh${id})"/>
     </g>
   </svg>`;
+}
+
+// Als Bild statt als eingebettetes SVG: der Browser rechnet es einmal in
+// Pixel um und muss es beim Scrollen nicht jedes Mal neu zeichnen.
+const garmentImgCache = new Map();
+function garmentImg(type, hex, view = "front", opts = {}) {
+  const key = `${type}|${hex}|${view}|${opts.transparent ? 1 : 0}|${opts.rich ? 1 : 0}`;
+  let src = garmentImgCache.get(key);
+  if (!src) {
+    const svg = garmentSVG(type, hex, view, opts).replace(
+      /<defs>/,
+      "<defs><style>.st{fill:none;stroke-width:1.2;stroke-dasharray:5 4}</style>"
+    );
+    src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    garmentImgCache.set(key, src);
+  }
+  const fit = opts.transparent ? "contain" : "cover";
+  return `<img class="gimg" src="${src}" alt="" decoding="async" draggable="false" style="object-fit:${fit}">`;
 }

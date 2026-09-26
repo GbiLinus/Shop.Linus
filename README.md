@@ -1,36 +1,46 @@
-# Shop.Linus — Die Passage der Marken
+# Shop.Linus — Das Haus der Marken
 
-Online-Shop für Kleidung verschiedener Marken. Die Startseite ist ein **Gang mit 10 Läden**: Man schaut gegen die Wand mit den Ladenfronten, jeder Scroll ist ein Schritt zur Seite. Ein Klick auf eine Tür öffnet sie, die Kamera fährt hinein, und man steht im Laden. Dort geht es über drei Etagen (Damen, Herren, Unisex) zu den Abteilungen. Zwischen den Etagen erscheint der Boden im Querschnitt.
+Online-Shop für Kleidung verschiedener Marken. Die Startseite ist ein **gläserner Aufzug**: Scrollen fährt ihn hoch und runter, jede Etage ist ein Laden. Beim Einrasten öffnen sich die Aufzugstüren und die Ladentür, der Markenname steht groß daneben und in der Anzeige. Zwischen den Etagen fährt man kurz durch eine schwarze Schicht, den Boden im Querschnitt. Rechts neben der Tür bringt ein Tastenfeld direkt zu jeder Marke.
 
-Status: **Passage, Läden, Shop, Warenkorb und Kasse funktionieren (Testbetrieb).** Marken, Ladenbilder und Produkte sind Platzhalter. Die Näh-Animation kommt ganz am Ende.
+Status: **Aufzug, Läden, Shop, Warenkorb und Kasse funktionieren (Testbetrieb).** Marken, Ladenbilder und Produkte sind Platzhalter. Die Näh-Animation kommt ganz am Ende.
 
 Lokal ansehen: im Ordner `python3 -m http.server` starten und `http://localhost:8000` aufrufen.
 
-## Die Passage
+## Der Aufzug
 
 | Was | Wie |
 |---|---|
-| Gehen | Scrollen oder Wischen (auch auf dem Handy nach oben/unten), Pfeiltasten ← →, oder die Striche unten anklicken |
-| Stehenbleiben | Die Ansicht rastet vor jedem Laden ein, das Schaufenster wird heller, „Eintreten“ erscheint |
-| Eintreten | Klick auf den Laden: Türen gehen auf, Fahrt durch die Tür, Überblendung in die Ladenfarbe |
-| Im Laden | Etagenknöpfe wie im Aufzug, Aufzugsanzeige rechts, Regale je Abteilung führen zu den gefilterten Artikeln |
-| Zurück | „Zurück in die Passage“ oder die Zurück-Taste: Man steht wieder vor demselben Laden |
-| Abkürzung | „Marken“ im Menü listet alle Läden, Damen/Herren/Unisex führen direkt zu den Artikeln |
-| Bewegung reduziert | Wer das im System eingestellt hat, sieht die Läden als ruhiges Raster ohne Animation |
+| Fahren | Scrollen oder Wischen nach oben/unten. Der Aufzug rastet auf jeder Etage ein |
+| Einrasten | Aufzugstüren und Ladentür öffnen sich, links erscheint „Etage + Marke“, oben die Anzeige |
+| Weiterfahren | Türen schließen sich, man fährt durch die schwarze Schicht zur nächsten Etage |
+| Tastenfeld | Rechts neben der Tür: E = Eingang, 1–10 = Marken. Die aktuelle Etage leuchtet |
+| Eintreten | Klick auf den Laden: Die Kamera bleibt stehen, das Bild blendet in die Ladenfarbe über |
+| Im Laden | Etagen Damen (EG), Herren (1. OG), Unisex (2. OG) mit Regalen je Kategorie |
+| Zurück | „Zurück zum Aufzug“ oder die Zurück-Taste: Der Aufzug steht wieder auf dieser Etage |
+| Bewegung reduziert | Wer das im System eingestellt hat, sieht die Etagen ruhig untereinander |
 
 **Marken ändern:** `BRANDS` in `assets/data.js`. Pro Marke: Name, Farben (Wand, Zierleisten, Schild, Innenraum), Fassadenmaterial (`panel`, `stone`, `metal`, `brick`, `plaster`, `concrete`, `marble`), Fensterform (`rect`, `arch`), Schrift (`serif`, `sans`, `mono`), Markise.
 
 **Produkte:** Solange es keine echten gibt, erzeugt `assets/data.js` pro Marke 13 Platzhalter (5 Damen, 5 Herren, 3 Unisex) aus `PRODUCT_TEMPLATES`. Echte Produkte bekommen die Felder `brand` (z. B. `"b03"`) und `gender` (`damen`, `herren`, `unisex`).
 
-**Bibliotheken:** GSAP + ScrollTrigger (Gehen, Einrasten, Etagen), Lenis (weiches Scrollen), View Transitions (Seitenübergänge). Alles lokal in `assets/vendor/`. GSAP Flip liegt bereit für spätere Übergänge.
+**Bibliotheken:** GSAP + ScrollTrigger (Fahren, Einrasten, Türen), Lenis (weiches Scrollen), View Transitions (Seitenübergänge). Alles lokal in `assets/vendor/`. GSAP Flip liegt bereit.
+
+## Leistung (Ziel: mindestens 60 fps)
+
+- Beim Fahren wird nur eine Ebene per `transform` verschoben (Grafikkarte), keine Filter, Unschärfe oder Spiegelungen.
+- Die Kabine (Glas, Türen, Tastenfeld) steht fest und wird nur einmal gezeichnet. Die Türen bewegen sich per `transform`.
+- Texturen (Stein, Beton, Marmor) sind vorab berechnete Bilder in `assets/tex/`, keine Rechenfilter.
+- Die Kleidungs-Platzhalter werden als Bilder eingebunden und einmal gerastert, nicht bei jedem Bild neu gezeichnet.
+- Die Artikelliste zeigt 24 Artikel und lädt per „Mehr anzeigen“ nach.
+- Gemessen (Testbrowser ohne Grafikkarte): Desktop 95 % der Bilder unter 5 ms. Handy bei 4-fach gedrosselter CPU meist unter 16,7 ms (= 60 fps).
 
 ## Was schon funktioniert
 
 | Bereich | Datei | Funktionen |
 |---|---|---|
-| Passage | `index.html` | Gang mit 10 Läden, danach Neuheiten, Versprechen, Newsletter |
-| Laden | `laden.html?marke=…` | Foyer mit Schild, 3 Etagen mit Regalen, Boden-Querschnitt, Nachbarläden |
-| Artikel | `shop.html` | Abteilungen (Damen, Herren, Unisex), Neuheiten, Filter (Kategorie, Marke, Farbe, Größe, Preis), Sortierung, Suche (`?q=`), Filter bleiben in der URL |
+| Aufzug | `index.html` | Gläserner Aufzug mit Eingang und 10 Etagen, danach Neuheiten, Versprechen, Newsletter |
+| Laden | `laden.html?marke=…` | Foyer mit Schild, 3 Etagen mit Regalen, Boden-Querschnitt, Nachbarläden, „Zurück zum Aufzug“ |
+| Artikel | `shop.html` | Abteilungen (Damen, Herren, Unisex), Neuheiten, Filter (Kategorie, Marke, Farbe, Größe, Preis), 24 pro Seite mit „Mehr anzeigen“, Sortierung, Suche (`?q=`), Filter bleiben in der URL |
 | Produktseite | `produkt.html?id=…` | 3 Bilder mit Zoom, Farbwahl, Größenwahl (ausverkaufte Größen gesperrt), Größentabelle, Merkliste, Details, ähnliche Artikel |
 | Warenkorb | Schublade + `warenkorb.html` | Menge ändern, entfernen, auf die Merkliste verschieben, Rabattcode (`WILLKOMMEN10` = 10 %), Geschenkverpackung, Anzeige bis zum Gratisversand |
 | Kasse | `kasse.html` | Kontakt, Adresse mit Prüfung (auch PLZ je Land), Standard/Express, Zahlungsart, AGB-Pflichthaken, Button „Zahlungspflichtig bestellen“, Bestellbestätigung mit Nummer |
